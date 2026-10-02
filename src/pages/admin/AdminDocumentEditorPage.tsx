@@ -39,8 +39,12 @@ export const AdminDocumentEditorPage: React.FC = () => {
   const navigate = useNavigate();
 
   // Stable documentId: In edit mode it is the existing id, in create mode a single generated UUID (Locked Decision A1)
-  const [documentId] = useState<string>(() => {
-    if (id) return id;
+  const [documentId, setDocumentId] = useState<string>(() => {
+    const rawId = (id || '').replace(/^doc-/, '');
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (rawId && uuidRegex.test(rawId)) {
+      return rawId;
+    }
     if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
       return crypto.randomUUID();
     }
@@ -115,6 +119,14 @@ export const AdminDocumentEditorPage: React.FC = () => {
             setFileSize(doc.file_size);
             setFileType(doc.file_type);
             setMimeType(doc.mime_type || undefined);
+
+            if (doc.id) {
+              const cleanDocId = doc.id.replace(/^doc-/, '');
+              const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+              if (uuidRegex.test(cleanDocId)) {
+                setDocumentId(cleanDocId);
+              }
+            }
           } else {
             setErrorMessage('Không tìm thấy văn bản.');
           }

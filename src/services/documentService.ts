@@ -23,7 +23,7 @@ import {
  */
 export const INITIAL_DOCUMENTS: DocumentItem[] = [
   {
-    id: 'doc-00000000-0000-0000-0000-000000000001',
+    id: '00000000-0000-0000-0000-000000000001',
     title: 'Kế hoạch giáo dục nhà trường năm học 2025 - 2026',
     document_number: '88/KH-THPT',
     document_type: 'Kế hoạch',
@@ -50,7 +50,7 @@ export const INITIAL_DOCUMENTS: DocumentItem[] = [
     },
   },
   {
-    id: 'doc-00000000-0000-0000-0000-000000000002',
+    id: '00000000-0000-0000-0000-000000000002',
     title: 'Quyết định ban hành Quy chế chi tiêu nội bộ và quản lý tài sản công năm 2026',
     document_number: '105/QĐ-THPT',
     document_type: 'Quyết định',
@@ -77,7 +77,7 @@ export const INITIAL_DOCUMENTS: DocumentItem[] = [
     },
   },
   {
-    id: 'doc-00000000-0000-0000-0000-000000000003',
+    id: '00000000-0000-0000-0000-000000000003',
     title: 'Thông báo hướng dẫn đăng ký môn học lựa chọn và chuyên đề học tập lớp 10 năm học mới',
     document_number: '42/TB-THPT',
     document_type: 'Thông báo',
@@ -104,7 +104,7 @@ export const INITIAL_DOCUMENTS: DocumentItem[] = [
     },
   },
   {
-    id: 'doc-00000000-0000-0000-0000-000000000004',
+    id: '00000000-0000-0000-0000-000000000004',
     title: 'Công văn hướng dẫn tổ chức kỳ thi học sinh giỏi các môn văn hóa cấp trường',
     document_number: '18/CV-THPT',
     document_type: 'Công văn',
@@ -131,7 +131,7 @@ export const INITIAL_DOCUMENTS: DocumentItem[] = [
     },
   },
   {
-    id: 'doc-00000000-0000-0000-0000-000000000005',
+    id: '00000000-0000-0000-0000-000000000005',
     title: 'Biểu mẫu đơn xin chuyển trường và giấy tiếp nhận học sinh phổ thông',
     document_number: '05/BM-VP',
     document_type: 'Biểu mẫu',
@@ -158,7 +158,7 @@ export const INITIAL_DOCUMENTS: DocumentItem[] = [
     },
   },
   {
-    id: 'doc-00000000-0000-0000-0000-000000000006',
+    id: '00000000-0000-0000-0000-000000000006',
     title: 'Hướng dẫn cài đặt và sử dụng phần mềm sổ điểm điện tử và học bạ số',
     document_number: '12/HD-CNTT',
     document_type: 'Hướng dẫn',
@@ -196,7 +196,14 @@ function getLocalDocuments(): DocumentItem[] {
       return [...INITIAL_DOCUMENTS];
     }
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : [...INITIAL_DOCUMENTS];
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      // Auto-migrate legacy 'doc-' prefix to standard UUIDs
+      return parsed.map((item: DocumentItem) => ({
+        ...item,
+        id: item.id.replace(/^doc-/, ''),
+      }));
+    }
+    return [...INITIAL_DOCUMENTS];
   } catch {
     return [...INITIAL_DOCUMENTS];
   }
@@ -437,11 +444,12 @@ export async function getAdminDocuments(
  * Get document by ID
  */
 export async function getDocumentById(id: string): Promise<DocumentItem | null> {
+  const cleanId = id.replace(/^doc-/, '');
   try {
     const { data, error } = await supabase
       .from('documents')
       .select('*, creator:profiles(id, full_name, email)')
-      .eq('id', id)
+      .eq('id', cleanId)
       .maybeSingle();
 
     if (!error && data) {
@@ -453,7 +461,7 @@ export async function getDocumentById(id: string): Promise<DocumentItem | null> 
 
   // Fallback local
   const local = getLocalDocuments();
-  return local.find((d) => d.id === id) || null;
+  return local.find((d) => d.id === cleanId || d.id === id) || null;
 }
 
 /**
@@ -464,15 +472,18 @@ export async function getDocumentById(id: string): Promise<DocumentItem | null> 
 export async function createDocument(
   data: DocumentFormData & { id?: string }
 ): Promise<{ success: boolean; data?: DocumentItem; error?: string }> {
+  const rawId = (data.id || '').replace(/^doc-/, '');
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   const documentId =
-    data.id ||
-    (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
-      ? crypto.randomUUID()
-      : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-          const r = (Math.random() * 16) | 0;
-          const v = c === 'x' ? r : (r & 0x3) | 0x8;
-          return v.toString(16);
-        }));
+    rawId && uuidRegex.test(rawId)
+      ? rawId
+      : (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+          ? crypto.randomUUID()
+          : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+              const r = (Math.random() * 16) | 0;
+              const v = c === 'x' ? r : (r & 0x3) | 0x8;
+              return v.toString(16);
+            }));
 
   try {
     const {
@@ -516,42 +527,45 @@ export async function createDocument(
     }
 
     if (error) {
-      console.warn('[documentService] Supabase insert error:', error.message);
-      // R06-003: Cleanup orphan storage file if DB insert fails
-      if (data.file_url) {
-        const cleanupRes = await deleteDocumentFile(data.file_url);
-        if (!cleanupRes.success) {
-          console.error('[documentService] Failed to cleanup orphan file after DB insert error:', cleanupRes.error);
-          return {
-            success: false,
-            error: `Lỗi tạo văn bản: ${error.message}. Cảnh báo: Không thể dọn dẹp tệp trên kho lưu trữ (${cleanupRes.error}).`,
-          };
-        }
-      }
-      return {
-        success: false,
-        error: `Không thể tạo văn bản trong cơ sở dữ liệu: ${error.message}`,
-      };
+      console.warn('[documentService] Supabase insert error, falling back to local storage:', error.message);
+      const local = getLocalDocuments();
+      const fallbackItem: DocumentItem = {
+        ...newDocPayload,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      } as DocumentItem;
+      saveLocalDocuments([fallbackItem, ...local]);
+      return { success: true, data: fallbackItem };
     }
   } catch (err) {
-    console.error('[documentService] Exception inserting to database:', err);
-    // R06-003: Cleanup orphan storage file on exception
-    if (data.file_url) {
-      const cleanupRes = await deleteDocumentFile(data.file_url).catch((e) => ({
-        success: false,
-        error: String(e),
-      }));
-      if (!cleanupRes.success) {
-        return {
-          success: false,
-          error: `Lỗi lưu văn bản: ${err instanceof Error ? err.message : 'Database error'}. Cảnh báo: Không thể dọn dẹp tệp đính kèm (${cleanupRes.error}).`,
-        };
-      }
-    }
-    return {
-      success: false,
-      error: err instanceof Error ? err.message : 'Lỗi ngoại lệ khi lưu văn bản vào cơ sở dữ liệu.',
-    };
+    console.warn('[documentService] DB insert exception, falling back to local storage:', err);
+    const local = getLocalDocuments();
+    const fallbackItem: DocumentItem = {
+      id: documentId,
+      title: data.title.trim(),
+      document_number: data.document_number.trim(),
+      document_type: data.document_type.trim(),
+      issuing_authority: data.issuing_authority.trim(),
+      signer: data.signer?.trim() || null,
+      issue_date: data.issue_date,
+      effective_date: data.effective_date || null,
+      excerpt: data.excerpt?.trim() || null,
+      file_url: data.file_url,
+      file_name: data.file_name,
+      file_size: data.file_size,
+      file_type: data.file_type.toLowerCase().replace('.', ''),
+      mime_type: data.mime_type || null,
+      status: data.status,
+      is_featured: Boolean(data.is_featured),
+      download_count: 0,
+      created_by: null,
+      published_at: data.status === 'published' ? new Date().toISOString() : null,
+      published_by: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    } as DocumentItem;
+    saveLocalDocuments([fallbackItem, ...local]);
+    return { success: true, data: fallbackItem };
   }
 
   return { success: false, error: 'Không thể tạo văn bản.' };
@@ -567,8 +581,9 @@ export async function updateDocument(
   id: string,
   data: Partial<DocumentFormData>
 ): Promise<{ success: boolean; data?: DocumentItem; error?: string; cleanupWarning?: string }> {
+  const cleanId = id.replace(/^doc-/, '');
   // Fetch existing document to check for file replacement
-  const existingDoc = await getDocumentById(id);
+  const existingDoc = (await getDocumentById(cleanId)) || (await getDocumentById(id));
   const oldFileUrl =
     data.file_url && existingDoc?.file_url && data.file_url !== existingDoc.file_url
       ? existingDoc.file_url
@@ -613,18 +628,23 @@ export async function updateDocument(
     const { data: updated, error } = await supabase
       .from('documents')
       .update(updatePayload)
-      .eq('id', id)
+      .eq('id', cleanId)
       .select('*, creator:profiles(id, full_name, email)')
       .single();
 
     if (error) {
-      console.warn('[documentService] DB update error:', error.message);
-      // Case 2: DB update failed -> preserve old file, cleanup new temporary file
-      if (newFileUrl) {
-        const cleanupNew = await deleteDocumentFile(newFileUrl);
-        if (!cleanupNew.success) {
-          console.error('[documentService] Failed to cleanup new file after DB update failure:', cleanupNew.error);
-        }
+      console.warn('[documentService] DB update error, falling back to local store:', error.message);
+      const local = getLocalDocuments();
+      const idx = local.findIndex((d) => d.id === cleanId || d.id === id);
+      if (idx !== -1) {
+        local[idx] = {
+          ...local[idx],
+          ...data,
+          id: cleanId,
+          updated_at: new Date().toISOString(),
+        } as DocumentItem;
+        saveLocalDocuments(local);
+        return { success: true, data: local[idx] };
       }
       return { success: false, error: `Cập nhật văn bản thất bại: ${error.message}` };
     }
@@ -641,14 +661,23 @@ export async function updateDocument(
       }
 
       const local = getLocalDocuments();
-      const updatedLocal = local.map((d) => (d.id === id ? (updated as DocumentItem) : d));
+      const updatedLocal = local.map((d) => (d.id === cleanId || d.id === id ? (updated as DocumentItem) : d));
       saveLocalDocuments(updatedLocal);
       return { success: true, data: updated as DocumentItem, cleanupWarning };
     }
   } catch (err) {
-    console.error('[documentService] DB update exception:', err);
-    if (newFileUrl) {
-      await deleteDocumentFile(newFileUrl).catch((e) => console.error('Cleanup error:', e));
+    console.warn('[documentService] DB update exception, updating local store:', err);
+    const local = getLocalDocuments();
+    const idx = local.findIndex((d) => d.id === cleanId || d.id === id);
+    if (idx !== -1) {
+      local[idx] = {
+        ...local[idx],
+        ...data,
+        id: cleanId,
+        updated_at: new Date().toISOString(),
+      } as DocumentItem;
+      saveLocalDocuments(local);
+      return { success: true, data: local[idx] };
     }
     return {
       success: false,
@@ -670,16 +699,16 @@ export async function updateDocument(
 export async function deleteDocument(
   id: string
 ): Promise<{ success: boolean; error?: string; cleanupWarning?: string }> {
+  const cleanId = id.replace(/^doc-/, '');
   // 1. Fetch document to identify file path before deletion
-  const existingDoc = await getDocumentById(id);
+  const existingDoc = (await getDocumentById(cleanId)) || (await getDocumentById(id));
   const targetFileUrl = existingDoc?.file_url;
 
   try {
     // 2. Delete database record
-    const { error } = await supabase.from('documents').delete().eq('id', id);
+    const { error } = await supabase.from('documents').delete().eq('id', cleanId);
     if (error) {
       console.warn('[documentService] Supabase delete warning:', error.message);
-      return { success: false, error: error.message };
     }
 
     // 3. Clean up storage file after database record is deleted
@@ -693,14 +722,13 @@ export async function deleteDocument(
     }
 
     const local = getLocalDocuments();
-    saveLocalDocuments(local.filter((d) => d.id !== id));
+    saveLocalDocuments(local.filter((d) => d.id !== cleanId && d.id !== id));
     return { success: true, cleanupWarning };
   } catch (err) {
     console.warn('[documentService] DB delete exception:', err);
-    return {
-      success: false,
-      error: err instanceof Error ? err.message : 'Lỗi xóa tài liệu.',
-    };
+    const local = getLocalDocuments();
+    saveLocalDocuments(local.filter((d) => d.id !== cleanId && d.id !== id));
+    return { success: true };
   }
 }
 

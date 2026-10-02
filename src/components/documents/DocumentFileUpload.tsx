@@ -69,7 +69,8 @@ export function DocumentFileUpload({
 
     setIsUploading(true);
     try {
-      const result = await uploadDocumentFile(file, documentId);
+      const cleanDocId = (documentId || '').replace(/^doc-/, '');
+      const result = await uploadDocumentFile(file, cleanDocId);
       if (result.success && result.url && result.fileName && result.fileSize !== undefined) {
         onFileUploaded({
           url: result.url,
