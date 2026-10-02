@@ -1,0 +1,6 @@
+{
+  "name": "School News Platform",
+  "description": "Nền tảng website tin tức và CMS cho các trường phổ thông Việt Nam.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
