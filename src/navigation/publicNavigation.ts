@@ -24,26 +24,26 @@ export const publicNavigationItems: NavigationItem[] = [
   {
     key: 'about',
     label: 'GIỚI THIỆU',
-    href: '/about',
+    href: '/page/gioi-thieu',
     icon: Info,
     children: [
       {
         key: 'about-school',
         label: 'Tổng quan nhà trường',
-        href: '/about',
+        href: '/page/gioi-thieu',
         description: 'Lịch sử phát triển và truyền thống nhà trường',
       },
       {
         key: 'about-board',
-        label: 'Ban Giám hiệu & Đội ngũ',
-        href: '/about#board',
-        description: 'Cơ cấu tổ chức và ban giám hiệu',
+        label: 'Cơ cấu tổ chức & Đội ngũ',
+        href: '/page/co-cau-to-chuc',
+        description: 'Ban Giám hiệu, đoàn thể và các tổ chuyên môn',
       },
       {
         key: 'about-vision',
         label: 'Tầm nhìn & Sứ mệnh',
-        href: '/about#vision',
-        description: 'Tri thức - Nhân ái - Sáng tạo',
+        href: '/page/gioi-thieu',
+        description: 'Tri thức - Nhân ái - Kỷ cương - Sáng tạo',
       },
     ],
   },
@@ -124,7 +124,7 @@ export const publicNavigationItems: NavigationItem[] = [
   {
     key: 'contact',
     label: 'LIÊN HỆ',
-    href: '/contact',
+    href: '/page/lien-he',
     icon: PhoneCall,
   },
 ];

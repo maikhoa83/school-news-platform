@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { PublicShell } from '../layouts/public/PublicShell';
 import { AdminShell } from '../layouts/admin/AdminShell';
 import { AuthShell } from '../layouts/auth/AuthShell';
@@ -92,7 +92,11 @@ export function AppRoutes() {
             </ModuleGuard>
           }
         />
-        <Route path="/about" element={<GenericPageDemo />} />
+        <Route path="/about" element={<Navigate to="/page/gioi-thieu" replace />} />
+        <Route path="/gioi-thieu" element={<Navigate to="/page/gioi-thieu" replace />} />
+        <Route path="/co-cau-to-chuc" element={<Navigate to="/page/co-cau-to-chuc" replace />} />
+        <Route path="/contact" element={<Navigate to="/page/lien-he" replace />} />
+        <Route path="/lien-he" element={<Navigate to="/page/lien-he" replace />} />
         <Route
           path="/documents"
           element={
@@ -171,8 +175,6 @@ export function AppRoutes() {
             </ModuleGuard>
           }
         />
-
-        <Route path="/contact" element={<GenericPageDemo />} />
       </Route>
 
       {/* Auth Shell Route */}

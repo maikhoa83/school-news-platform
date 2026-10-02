@@ -14,6 +14,7 @@ import {
 import { useHomepageLayout } from '../../homepage/hooks/useHomepageLayout';
 import { HomepageEditor } from '../../homepage/components/editor/HomepageEditor';
 import { PreviewFrame } from '../../homepage/components/editor/PreviewFrame';
+import { EducationalSlidesEditor } from '../../components/admin/EducationalSlidesEditor';
 import { usePermissions } from '../../hooks/usePermissions';
 import { useAuth } from '../../hooks/useAuth';
 import { Button } from '../../components/ui/Button';
@@ -24,7 +25,7 @@ import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 export function AdminHomepagePage() {
   const { hasPermission } = usePermissions();
   const { profile } = useAuth();
-  const [activeTab, setActiveTab] = useState<'editor' | 'preview'>('editor');
+  const [activeTab, setActiveTab] = useState<'editor' | 'preview' | 'slides'>('editor');
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const canEdit = hasPermission('homepage.edit');
@@ -205,19 +206,31 @@ export function AdminHomepagePage() {
             type="button"
             onClick={() => setActiveTab('editor')}
             aria-label="Chuyển sang chế độ Chỉnh sửa bố cục"
-            className={`px-3 py-1.5 rounded-md font-semibold text-xs transition-colors ${
+            className={`px-3 py-1.5 rounded-md font-semibold text-xs transition-colors cursor-pointer ${
               activeTab === 'editor'
                 ? 'bg-white text-slate-900 shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Chỉnh sửa Bố cục (Editor)
+            Chỉnh sửa Bố cục
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('slides')}
+            aria-label="Quản lý Slider thông điệp giáo dục"
+            className={`px-3 py-1.5 rounded-md font-semibold text-xs transition-colors cursor-pointer ${
+              activeTab === 'slides'
+                ? 'bg-white text-blue-900 shadow-xs font-bold'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Thông điệp &amp; Phương châm (Slider)
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('preview')}
             aria-label="Chuyển sang chế độ Xem trước trực quan"
-            className={`px-3 py-1.5 rounded-md font-semibold text-xs transition-colors ${
+            className={`px-3 py-1.5 rounded-md font-semibold text-xs transition-colors cursor-pointer ${
               activeTab === 'preview'
                 ? 'bg-white text-slate-900 shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
@@ -229,7 +242,7 @@ export function AdminHomepagePage() {
       </div>
 
       {/* Tab Panels */}
-      {activeTab === 'editor' ? (
+      {activeTab === 'editor' && (
         <HomepageEditor
           mainBlocks={mainBlocks}
           rightBlocks={rightBlocks}
@@ -241,7 +254,13 @@ export function AdminHomepagePage() {
           onResetToStarter={resetToStarter}
           canEdit={canEdit}
         />
-      ) : (
+      )}
+
+      {activeTab === 'slides' && (
+        <EducationalSlidesEditor />
+      )}
+
+      {activeTab === 'preview' && (
         <PreviewFrame
           blocks={layout?.blocks || []}
           onRefresh={refetch}
