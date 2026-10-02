@@ -1,1 +1,0 @@
-export { useConfig } from '../contexts/ConfigContext';
