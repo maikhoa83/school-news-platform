@@ -170,7 +170,7 @@ export function SpecialTopicUncleHoPage() {
   });
 
   const handleDownloadDoc = (docTitle: string, format: string) => {
-    const sampleContent = `TRƯỜNG THCS & THPT VĨNH PHONG\nCHUYÊN ĐỀ: HỌC TẬP VÀ LÀM THEO TƯ TƯỞNG, ĐẠO ĐỨC, PHONG CÁCH HỒ CHÍ MINH\n\nTài liệu: ${docTitle}\nNăm học: 2024 - 2025\nĐịnh dạng: ${format}\n\nNội dung tài liệu học tập, sinh hoạt chuyên đề tại Trường THCS & THPT Vĩnh Phong.`;
+    const sampleContent = `TRƯỜNG THCS & THPT VĨNH PHONG\nCHUYÊN ĐỀ: ĐẨY MẠNH HỌC TẬP, THỰC HÀNH TƯ TƯỞNG, ĐẠO ĐỨC, PHƯƠNG PHÁP, PHONG CÁCH HỒ CHÍ MINH TRONG GIAI ĐOẠN PHÁT TRIỂN MỚI\n\nTài liệu: ${docTitle}\nNăm học: 2026 - 2027\nĐịnh dạng: ${format}\n\nNội dung tài liệu học tập, sinh hoạt chuyên đề tại Trường THCS & THPT Vĩnh Phong.`;
     const blob = new Blob([sampleContent], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -196,7 +196,7 @@ export function SpecialTopicUncleHoPage() {
             <span className="text-slate-600">Trang chuyên đề</span>
             <ChevronRight className="h-3 w-3 text-slate-400" />
             <span className="text-[#003B8E] font-semibold">
-              Học tập và làm theo tư tưởng, đạo đức, phong cách Hồ Chí Minh
+              Đẩy mạnh học tập, thực hành tư tưởng, đạo đức, phương pháp, phong cách Hồ Chí Minh trong giai đoạn phát triển mới
             </span>
           </nav>
         </div>
@@ -216,10 +216,10 @@ export function SpecialTopicUncleHoPage() {
             <div className="space-y-4 max-w-3xl">
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400 text-red-950 font-black text-xs uppercase tracking-wider shadow-sm">
                 <Star className="w-3.5 h-3.5 fill-current" />
-                <span>CHUYÊN ĐỀ ĐẶC BIỆT NĂM HỌC 2024 – 2025</span>
+                <span>CHUYÊN ĐỀ ĐẶC BIỆT NĂM HỌC 2026 – 2027</span>
               </div>
-              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-amber-200 leading-tight drop-shadow-md">
-                ĐẨY MẠNH HỌC TẬP VÀ LÀM THEO TƯ TƯỞNG, ĐẠO ĐỨC, PHONG CÁCH HỒ CHÍ MINH
+              <h1 className="text-xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-amber-200 leading-tight drop-shadow-md">
+                ĐẨY MẠNH HỌC TẬP, THỰC HÀNH TƯ TƯỞNG, ĐẠO ĐỨC, PHƯƠNG PHÁP, PHONG CÁCH HỒ CHÍ MINH TRONG GIAI ĐOẠN PHÁT TRIỂN MỚI
               </h1>
               <p className="text-sm sm:text-base text-red-100 leading-relaxed font-medium">
                 Tuổi trẻ Trường THCS & THPT Vĩnh Phong quyết tâm thi đua dạy tốt, học tốt, rèn đức luyện tài,

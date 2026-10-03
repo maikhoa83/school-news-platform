@@ -509,7 +509,7 @@ export function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-r from-[#8B0000] via-[#A80000] to-[#7B0000]">
             <img
               src={bannerHoChiMinhImg}
-              alt="Học tập và làm theo tư tưởng, đạo đức, phong cách Hồ Chí Minh"
+              alt="Đẩy mạnh học tập, thực hành tư tưởng, đạo đức, phương pháp, phong cách Hồ Chí Minh trong giai đoạn phát triển mới"
               className="w-full h-full object-cover mix-blend-overlay opacity-30 group-hover:scale-105 transition-transform duration-700"
             />
           </div>
@@ -521,10 +521,10 @@ export function HomePage() {
                 <span>CHUYÊN ĐỀ ĐẶC BIỆT</span>
               </div>
               <h2 className="text-base sm:text-lg lg:text-xl font-black text-amber-200 tracking-tight leading-snug drop-shadow-xs uppercase">
-                HỌC TẬP VÀ LÀM THEO TƯ TƯỞNG, ĐẠO ĐỨC, PHONG CÁCH HỒ CHÍ MINH
+                ĐẨY MẠNH HỌC TẬP, THỰC HÀNH TƯ TƯỞNG, ĐẠO ĐỨC, PHƯƠNG PHÁP, PHONG CÁCH HỒ CHÍ MINH TRONG GIAI ĐOẠN PHÁT TRIỂN MỚI
               </h2>
               <p className="text-xs sm:text-sm text-red-100 max-w-2xl font-medium">
-                Tuổi trẻ Trường THCS &amp; THPT Vĩnh Phong rèn đức, luyện tài, học tập và noi gương Bác Hồ vĩ đại
+                Tuổi trẻ Trường THCS &amp; THPT Vĩnh Phong rèn đức, luyện tài, học tập và noi gương Bác Hồ vĩ đại trong giai đoạn phát triển mới
               </p>
             </div>
 

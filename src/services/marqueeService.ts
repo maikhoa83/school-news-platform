@@ -13,14 +13,14 @@ export interface MarqueeConfig {
 
 export const DEFAULT_MARQUEE_CONFIG: MarqueeConfig = {
   isEnabled: true,
-  badgeText: 'CHỦ ĐỀ NĂM HỌC 2025 – 2026',
+  badgeText: 'CHỦ ĐỀ NĂM HỌC 2026 – 2027',
   content:
-    'Nhiệt liệt chào mừng năm học mới! Thầy và trò Trường THCS & THPT Vĩnh Phong quyết tâm thi đua "Dạy tốt - Học tốt", tích cực đổi mới phương pháp giảng dạy, đẩy mạnh chuyển đổi số và xây dựng trường học hạnh phúc, an toàn, thân thiện!',
+    'Năm học 2026 - 2027: "Đổi mới tư duy - Chuyển biến mạnh mẽ - Kết quả thực chất". Thầy và trò Trường THCS & THPT Vĩnh Phong quyết tâm thi đua dạy tốt, học tốt, đổi mới căn bản toàn diện và nâng cao chất lượng giáo dục!',
   speed: 'normal',
   linkUrl: '/news',
 };
 
-const STORAGE_KEY = 'school_marquee_banner_v1';
+const STORAGE_KEY = 'school_marquee_banner_v2';
 
 export function getMarqueeConfig(): MarqueeConfig {
   try {
@@ -30,6 +30,10 @@ export function getMarqueeConfig(): MarqueeConfig {
       return { ...DEFAULT_MARQUEE_CONFIG };
     }
     const parsed = JSON.parse(raw);
+    if (parsed.badgeText && (parsed.badgeText.includes('2025') || parsed.badgeText.includes('2024'))) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_MARQUEE_CONFIG));
+      return { ...DEFAULT_MARQUEE_CONFIG };
+    }
     return { ...DEFAULT_MARQUEE_CONFIG, ...parsed };
   } catch (err) {
     console.warn('[marqueeService] Error loading config:', err);

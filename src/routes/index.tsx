@@ -143,7 +143,7 @@ export function AppRoutes() {
             </ModuleGuard>
           }
         />
-        {/* Special Topic Landing Page - Học tập và làm theo Bác */}
+        {/* Special Topic Landing Page - Đẩy mạnh học tập, thực hành tư tưởng, đạo đức, phương pháp, phong cách Hồ Chí Minh trong giai đoạn phát triển mới */}
         <Route path="/chuyen-de/hoc-tap-va-lam-theo-bac" element={<SpecialTopicUncleHoPage />} />
         <Route path="/chuyen-de" element={<SpecialTopicUncleHoPage />} />
         <Route

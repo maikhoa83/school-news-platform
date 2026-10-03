@@ -151,14 +151,14 @@ export function PublicFooter({
         </div>
       </div>
 
-      {/* Bottom Bar: Copyright & EduWeb credit */}
+      {/* Bottom Bar: Copyright & MVK credit */}
       <div className="border-t border-blue-900 bg-[#001f4d] py-3.5 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-blue-200/80">
           <div>
             © {currentYear} TRƯỜNG THCS & THPT VĨNH PHONG. All rights reserved.
           </div>
           <div>
-            Thiết kế bởi <span className="font-semibold text-white">EduWeb</span>
+            Thiết kế web bởi <span className="font-semibold text-white">MVK</span>
           </div>
         </div>
       </div>

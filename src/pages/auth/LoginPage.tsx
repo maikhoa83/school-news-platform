@@ -218,7 +218,7 @@ export function LoginPage() {
 
       {/* Footer Copyright */}
       <div className="pt-8 text-center text-[11px] text-slate-400">
-        © 2026 Trường THCS &amp; THPT Vĩnh Phong. All rights reserved.
+        © 2026 Trường THCS &amp; THPT Vĩnh Phong. All rights reserved. · Thiết kế web bởi <strong className="font-semibold text-slate-500">MVK</strong>
       </div>
     </div>
   );

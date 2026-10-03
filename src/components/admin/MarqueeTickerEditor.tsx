@@ -104,7 +104,7 @@ export function MarqueeTickerEditor() {
               type="text"
               value={config.badgeText}
               onChange={(e) => setConfig({ ...config, badgeText: e.target.value })}
-              placeholder="VD: CHỦ ĐỀ NĂM HỌC 2025 – 2026 hoặc CHỦ ĐIỂM THÁNG 10"
+              placeholder="VD: CHỦ ĐỀ NĂM HỌC 2026 – 2027 hoặc CHỦ ĐIỂM THÁNG 10"
               required
               className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white focus:ring-2 focus:ring-blue-600 focus:outline-none font-bold text-amber-800"
             />
