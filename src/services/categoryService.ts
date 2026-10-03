@@ -359,3 +359,53 @@ export async function deleteCategory(id: string): Promise<{ success: boolean; er
     };
   }
 }
+
+/**
+ * Synchronize and restore 7 standard school categories to database
+ */
+export async function syncDefaultSchoolCategories(): Promise<{
+  success: boolean;
+  count: number;
+  error?: string;
+}> {
+  try {
+    const toUpsert: any[] = [];
+    for (const parent of INITIAL_CATEGORIES) {
+      toUpsert.push({
+        id: parent.id,
+        name: parent.name,
+        slug: parent.slug,
+        description: parent.description,
+        parent_id: null,
+        sort_order: parent.sort_order,
+        is_active: parent.is_active,
+      });
+      if (parent.children) {
+        for (const child of parent.children) {
+          toUpsert.push({
+            id: child.id,
+            name: child.name,
+            slug: child.slug,
+            description: child.description,
+            parent_id: parent.id,
+            sort_order: child.sort_order,
+            is_active: child.is_active,
+          });
+        }
+      }
+    }
+
+    const { error } = await supabase.from('news_categories').upsert(toUpsert, { onConflict: 'id' });
+    if (error) {
+      console.warn('[categoryService] Database upsert warning:', error.message);
+    }
+    return { success: true, count: toUpsert.length };
+  } catch (err) {
+    return {
+      success: false,
+      count: 0,
+      error: err instanceof Error ? err.message : 'Lỗi đồng bộ chuyên mục',
+    };
+  }
+}
+

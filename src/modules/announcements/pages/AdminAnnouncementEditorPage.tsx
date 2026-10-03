@@ -19,6 +19,11 @@ import {
   CheckCircle2,
   Lock,
   Eye,
+  Plus,
+  Trash2,
+  Upload,
+  FileSpreadsheet,
+  FileText,
 } from 'lucide-react';
 import { usePermissions } from '../../../hooks/usePermissions';
 import { useAuth } from '../../../hooks/useAuth';
@@ -48,6 +53,60 @@ export const AdminAnnouncementEditorPage: React.FC = () => {
   // Form states
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [contentType, setContentType] = useState<'text' | 'schedule'>('text');
+  const [scheduleIntro, setScheduleIntro] = useState('Kế hoạch hoạt động giáo dục và lịch công tác trọng tâm trong tuần của nhà trường:');
+  const [scheduleOutro, setScheduleOutro] = useState('Đề nghị các bộ phận, tổ chuyên môn và cá nhân chủ động sắp xếp thời gian thực hiện nghiêm túc.');
+  const [scheduleRows, setScheduleRows] = useState([
+    { id: '1', time: 'Thứ Hai (07h00)', task: 'Chào cờ đầu tuần, sinh hoạt chính trị dưới cờ theo chủ điểm', department: 'BGH, Đoàn trường, GVCN', note: 'Sân trường' },
+    { id: '2', time: 'Thứ Ba (14h00)', task: 'Họp Hội đồng sư phạm triển khai nhiệm vụ trọng tâm', department: 'Toàn thể CB - GV - NV', note: 'Phòng Hội đồng' },
+    { id: '3', time: 'Thứ Tư (08h00)', task: 'Thao giảng chuyên đề đổi mới phương pháp dạy học GDPT 2018', department: 'Tổ Toán - Tin, KHTN', note: 'Phòng thực hành' },
+    { id: '4', time: 'Thứ Năm (07h30)', task: 'Kiểm tra hồ sơ sổ sách và giáo án định kỳ đợt 1', department: 'Ban Kiểm tra chuyên môn', note: 'Văn phòng' },
+    { id: '5', time: 'Thứ Sáu (15h30)', task: 'Sinh hoạt chuyên môn tổ bộ môn và họp Chi đoàn', department: 'Các tổ chuyên môn', note: 'Phòng bộ môn' },
+    { id: '6', time: 'Thứ Bảy (07h30)', task: 'Tổng kết thi đua tuần, lao động vệ sinh khuôn viên trường', department: 'Đoàn trường, Liên đội', note: 'Khuôn viên trường' },
+  ]);
+
+  const buildScheduleContent = (intro: string, rows: typeof scheduleRows, outro: string) => {
+    let md = '';
+    if (intro.trim()) md += `${intro.trim()}\n\n`;
+    md += '[BẢNG KẾ HOẠCH CÔNG TÁC]\n';
+    md += '| Thời gian | Nội dung công việc | Bộ phận thực hiện | Ghi chú / Địa điểm |\n';
+    md += '| --- | --- | --- | --- |\n';
+    rows.forEach((r) => {
+      md += `| ${r.time.replace(/\|/g, '-')} | ${r.task.replace(/\|/g, '-')} | ${r.department.replace(/\|/g, '-')} | ${r.note.replace(/\|/g, '-')} |\n`;
+    });
+    if (outro.trim()) md += `\n${outro.trim()}`;
+    return md;
+  };
+
+  const handleDocxImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const text = event.target?.result as string;
+      if (!text) return;
+      const lines = text.split('\n').filter((l) => l.trim().length > 0);
+      const newRows: typeof scheduleRows = [];
+      lines.forEach((line, index) => {
+        const parts = line.split(/[:\-\t|]/);
+        if (parts.length >= 2) {
+          newRows.push({
+            id: String(Date.now() + index),
+            time: parts[0]?.trim() || `Mục ${index + 1}`,
+            task: parts[1]?.trim() || line.trim(),
+            department: parts[2]?.trim() || 'Các bộ phận',
+            note: parts[3]?.trim() || '',
+          });
+        }
+      });
+      if (newRows.length > 0) {
+        setScheduleRows(newRows);
+        setContentType('schedule');
+      }
+    };
+    reader.readAsText(file);
+  };
+
   const [priority, setPriority] = useState<AnnouncementPriority>('normal');
   const [isPinned, setIsPinned] = useState(false);
   const [publishMode, setPublishMode] = useState<'draft' | 'publish_now' | 'schedule'>('publish_now');

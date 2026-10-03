@@ -728,3 +728,59 @@ export async function updateUserProfile(
     handleDatabaseError(err, 'Lỗi khi cập nhật thông tin người dùng.');
   }
 }
+
+export interface CreateUserInput {
+  email: string;
+  full_name: string;
+  phone?: string | null;
+  department?: string | null;
+  role_code?: RoleCode;
+  is_active?: boolean;
+}
+
+/**
+ * Create a new user profile and assign initial role
+ */
+export async function createUserRecord(input: CreateUserInput): Promise<UserRecord> {
+  const newId = crypto.randomUUID();
+  const now = new Date().toISOString();
+  const email = input.email.trim().toLowerCase();
+  const fullName = input.full_name.trim();
+
+  // 1. Insert profile record
+  const { error: profileError } = await supabase.from('profiles').insert({
+    id: newId,
+    email,
+    full_name: fullName,
+    phone: input.phone?.trim() || null,
+    is_active: input.is_active ?? true,
+    created_at: now,
+    updated_at: now,
+  });
+
+  if (profileError) {
+    handleDatabaseError(profileError, 'Không thể tạo hồ sơ người dùng mới.');
+  }
+
+  // 2. Assign initial role
+  const targetRoleCode = input.role_code || 'AUTHOR';
+  try {
+    const { data: roleData } = await supabase
+      .from('roles')
+      .select('id')
+      .eq('code', targetRoleCode)
+      .maybeSingle();
+
+    if (roleData?.id) {
+      await supabase.from('user_roles').insert({
+        user_id: newId,
+        role_id: roleData.id,
+      });
+    }
+  } catch (roleErr) {
+    console.warn('[userService] Could not assign role automatically:', roleErr);
+  }
+
+  return await getUserById(newId);
+}
+

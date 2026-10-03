@@ -10,6 +10,7 @@ import { Modal } from '../../../components/ui/Modal';
 import { Button } from '../../../components/ui/Button';
 import { AnnouncementItem } from '../types/announcement';
 import { AnnouncementPriorityBadge } from './AnnouncementPriorityBadge';
+import { AnnouncementContentRenderer } from './AnnouncementContentRenderer';
 
 interface AnnouncementDetailModalProps {
   announcement: AnnouncementItem | null;
@@ -110,11 +111,9 @@ export const AnnouncementDetailModal: React.FC<AnnouncementDetailModalProps> = (
           </div>
         )}
 
-        {/* Plain-text content - strictly secured against XSS by avoiding dangerouslySetInnerHTML */}
+        {/* Announcement Content (Supports Plain text and Work Schedule Table) */}
         <div className="bg-slate-50/60 rounded-xl p-4 sm:p-6 border border-slate-100">
-          <div className="whitespace-pre-wrap font-sans text-sm sm:text-base text-slate-800 leading-relaxed select-text">
-            {announcement.content}
-          </div>
+          <AnnouncementContentRenderer content={announcement.content} />
         </div>
 
         {/* Footer Actions */}

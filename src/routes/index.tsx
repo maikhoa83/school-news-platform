@@ -45,6 +45,7 @@ import { FoundationShowcase } from '../pages/FoundationShowcase';
 import { PublicAlbumsListPage } from '../pages/public/PublicAlbumsListPage';
 import { PublicAlbumDetailPage } from '../pages/public/PublicAlbumDetailPage';
 import { PublicMediaPage } from '../pages/public/PublicMediaPage';
+import { SpecialTopicUncleHoPage } from '../pages/public/SpecialTopicUncleHoPage';
 import { PublicPage } from '../pages/public/PublicPage';
 import { NotFoundState } from '../components/common/NotFoundState';
 import { ProtectedRoute } from '../components/guards/ProtectedRoute';
@@ -142,6 +143,9 @@ export function AppRoutes() {
             </ModuleGuard>
           }
         />
+        {/* Special Topic Landing Page - Học tập và làm theo Bác */}
+        <Route path="/chuyen-de/hoc-tap-va-lam-theo-bac" element={<SpecialTopicUncleHoPage />} />
+        <Route path="/chuyen-de" element={<SpecialTopicUncleHoPage />} />
         <Route
           path="/media/:slug"
           element={
@@ -523,6 +527,16 @@ export function AppRoutes() {
           }
         />
         <Route
+          path="homepage"
+          element={
+            <ModuleGuard moduleKey="homepage" moduleName="Giao diện trang chủ">
+              <ProtectedRoute requiredPermission="homepage.view">
+                <AdminHomepagePage />
+              </ProtectedRoute>
+            </ModuleGuard>
+          }
+        />
+        <Route
           path="homepage/*"
           element={
             <ModuleGuard moduleKey="homepage" moduleName="Giao diện trang chủ">
@@ -532,6 +546,8 @@ export function AppRoutes() {
             </ModuleGuard>
           }
         />
+        <Route path="marquee" element={<Navigate to="/admin/homepage?tab=marquee" replace />} />
+        <Route path="slides" element={<Navigate to="/admin/homepage?tab=slides" replace />} />
         {/* Audit & Security Log Routes */}
         <Route
           path="audit"

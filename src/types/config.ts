@@ -9,6 +9,7 @@ export interface SchoolIdentityConfig {
   slogan: string;
   logo_url: string;
   favicon_url: string;
+  banner_url?: string;
   primary_color: string;
   secondary_color: string;
   phone: string;

@@ -236,24 +236,24 @@ export const NewsDetailPage: React.FC = () => {
               </span>
             </div>
 
-            {/* Article Title */}
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#002B66] leading-snug tracking-tight">
+            {/* Article Main Title */}
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#002B66] leading-snug tracking-tight">
               {article.title}
             </h1>
 
             {/* Metadata Bar */}
-            <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 pb-3 border-b border-slate-100">
+            <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-slate-500 pb-3 border-b border-slate-100">
               <div className="flex items-center gap-1.5">
-                <Calendar className="h-3.5 w-3.5 text-slate-400" />
+                <Calendar className="h-4 w-4 text-slate-400" />
                 <span>{formattedDate}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <User className="h-3.5 w-3.5 text-blue-700" />
-                <span>Tác giả: <strong className="text-slate-700">{article.author_name || article.author?.full_name || 'Ban Truyền thông'}</strong></span>
+                <User className="h-4 w-4 text-blue-700" />
+                <span>Tác giả: <strong className="text-slate-800">{article.author_name || article.author?.full_name || 'Ban Truyền thông'}</strong></span>
               </div>
               {article.source && (
                 <div className="flex items-center gap-1.5">
-                  <Bookmark className="h-3.5 w-3.5 text-amber-500" />
+                  <Bookmark className="h-4 w-4 text-amber-500" />
                   <span>Nguồn: </span>
                   {article.source_url ? (
                     <a
@@ -263,15 +263,15 @@ export const NewsDetailPage: React.FC = () => {
                       className="text-[#003B8E] hover:underline font-semibold inline-flex items-center gap-0.5"
                     >
                       <span>{article.source}</span>
-                      <ExternalLink className="w-3 h-3" />
+                      <ExternalLink className="w-3.5 h-3.5" />
                     </a>
                   ) : (
-                    <strong className="text-slate-700">{article.source}</strong>
+                    <strong className="text-slate-800">{article.source}</strong>
                   )}
                 </div>
               )}
               <div className="flex items-center gap-1.5">
-                <Eye className="h-3.5 w-3.5 text-slate-400" />
+                <Eye className="h-4 w-4 text-slate-400" />
                 <span>
                   {typeof article.view_count === 'number'
                     ? article.view_count.toLocaleString('vi-VN')
@@ -281,36 +281,40 @@ export const NewsDetailPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Excerpt / Lead */}
-            <p className="text-xs sm:text-sm font-medium text-slate-700 leading-relaxed">
+            {/* Excerpt / Lead with larger font */}
+            <div className="text-base sm:text-lg font-semibold text-slate-800 leading-relaxed bg-blue-50/50 p-4 sm:p-5 rounded-xl border-l-4 border-[#003B8E]">
               {article.excerpt}
-            </p>
+            </div>
 
             {/* Main Featured Image with Caption */}
             <div className="space-y-2">
-              <div className="rounded-lg overflow-hidden border border-slate-200 bg-slate-100">
+              <div className="rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
                 <img
                   src={campusFacadeImg}
                   alt={article.title}
-                  className="w-full h-auto max-h-[460px] object-cover"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = campusFacadeImg;
+                  }}
+                  className="w-full h-auto max-h-[480px] object-cover"
                 />
               </div>
-              <p className="text-center text-[11px] sm:text-xs text-slate-500 italic">
+              <p className="text-center text-xs sm:text-sm text-slate-500 italic">
                 Toàn cảnh buổi lễ tổng kết năm học 2024 – 2025 tại sân trường THCS &amp; THPT Vĩnh Phong
               </p>
             </div>
 
-            {/* Rich Article Body Content matching Chi tiet tin.png */}
+            {/* Rich Article Body Content with enlarged font */}
             {dbNews?.content ? (
               <div
-                className="prose prose-slate max-w-none text-xs sm:text-sm text-slate-800 leading-relaxed"
+                className="prose prose-slate max-w-none text-base sm:text-lg text-slate-800 leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: sanitizeHtml(dbNews.content) }}
               />
             ) : (
-              <div className="space-y-6 text-xs sm:text-sm text-slate-800 leading-relaxed">
+              <div className="space-y-6 text-base sm:text-lg text-slate-800 leading-relaxed">
                 {/* Section 1 */}
                 <div className="space-y-3">
-                  <h2 className="text-sm sm:text-base font-bold text-[#002B66]">
+                  <h2 className="text-lg sm:text-xl font-bold text-[#002B66]">
                     1. Nhìn lại chặng đường đã qua
                   </h2>
                   <p>
@@ -323,21 +327,21 @@ export const NewsDetailPage: React.FC = () => {
 
                 {/* Section 2 */}
                 <div className="space-y-3">
-                  <h2 className="text-sm sm:text-base font-bold text-[#002B66]">
+                  <h2 className="text-lg sm:text-xl font-bold text-[#002B66]">
                     2. Vinh danh và định hướng tương lai
                   </h2>
                   <p>
                     Tại buổi lễ, nhà trường đã tuyên dương, khen thưởng các tập thể, cá nhân có thành tích xuất sắc trong năm học. Đây là sự ghi nhận xứng đáng cho những nỗ lực không ngừng nghỉ của thầy và trò, đồng thời là nguồn động viên mạnh mẽ để tiếp tục phấn đấu trong những năm học tới.
                   </p>
 
-                  {/* Callout Quote Box matching mockup */}
+                  {/* Callout Quote Box */}
                   <div className="p-4 sm:p-5 rounded-xl bg-blue-50/70 border border-blue-100 flex items-start gap-4">
-                    <Quote className="h-6 w-6 text-[#003B8E] shrink-0 mt-1 fill-blue-100" />
+                    <Quote className="h-7 w-7 text-[#003B8E] shrink-0 mt-1 fill-blue-100" />
                     <div className="space-y-2 flex-1">
-                      <p className="text-xs sm:text-sm text-slate-800 italic leading-relaxed font-normal">
+                      <p className="text-base sm:text-lg text-slate-800 italic leading-relaxed font-normal">
                         “Mỗi thành tích hôm nay là nền tảng cho những ước mơ ngày mai. Tập thể sư phạm và học sinh nhà trường sẽ tiếp tục phát huy truyền thống, đoàn kết, sáng tạo, vững bước trên hành trình chinh phục những mục tiêu mới.”
                       </p>
-                      <p className="text-right text-xs font-bold text-[#003B8E]">
+                      <p className="text-right text-xs sm:text-sm font-bold text-[#003B8E]">
                         — Ban Giám hiệu nhà trường
                       </p>
                     </div>
@@ -346,7 +350,7 @@ export const NewsDetailPage: React.FC = () => {
 
                 {/* Section 3 */}
                 <div className="space-y-3">
-                  <h2 className="text-sm sm:text-base font-bold text-[#002B66]">
+                  <h2 className="text-lg sm:text-xl font-bold text-[#002B66]">
                     3. Khoảnh khắc đáng nhớ
                   </h2>
                   <p>

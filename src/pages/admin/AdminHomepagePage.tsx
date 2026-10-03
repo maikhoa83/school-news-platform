@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   Sliders,
   Eye,
@@ -26,7 +27,35 @@ import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 export function AdminHomepagePage() {
   const { hasPermission } = usePermissions();
   const { profile } = useAuth();
-  const [activeTab, setActiveTab] = useState<'editor' | 'preview' | 'slides' | 'marquee'>('editor');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const validTabs = ['editor', 'preview', 'slides', 'marquee'] as const;
+  type TabType = typeof validTabs[number];
+
+  const initialTab: TabType = (tabParam && validTabs.includes(tabParam as TabType)) ? (tabParam as TabType) : 'editor';
+  const [activeTab, setActiveTabState] = useState<TabType>(initialTab);
+
+  useEffect(() => {
+    if (tabParam && validTabs.includes(tabParam as TabType)) {
+      setActiveTabState(tabParam as TabType);
+    } else if (!tabParam) {
+      setActiveTabState('editor');
+    }
+  }, [tabParam]);
+
+  const handleTabChange = (newTab: TabType) => {
+    setActiveTabState(newTab);
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (newTab === 'editor') {
+        next.delete('tab');
+      } else {
+        next.set('tab', newTab);
+      }
+      return next;
+    });
+  };
+
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const canEdit = hasPermission('homepage.edit');
@@ -205,7 +234,7 @@ export function AdminHomepagePage() {
         <div className="inline-flex rounded-lg bg-slate-200/80 p-0.5">
           <button
             type="button"
-            onClick={() => setActiveTab('editor')}
+            onClick={() => handleTabChange('editor')}
             aria-label="Chuyển sang chế độ Chỉnh sửa bố cục"
             className={`px-3 py-1.5 rounded-md font-semibold text-xs transition-colors cursor-pointer ${
               activeTab === 'editor'
@@ -217,7 +246,7 @@ export function AdminHomepagePage() {
           </button>
           <button
             type="button"
-            onClick={() => setActiveTab('slides')}
+            onClick={() => handleTabChange('slides')}
             aria-label="Quản lý Slider thông điệp giáo dục"
             className={`px-3 py-1.5 rounded-md font-semibold text-xs transition-colors cursor-pointer ${
               activeTab === 'slides'
@@ -229,7 +258,7 @@ export function AdminHomepagePage() {
           </button>
           <button
             type="button"
-            onClick={() => setActiveTab('marquee')}
+            onClick={() => handleTabChange('marquee')}
             aria-label="Quản lý dòng chữ chạy chủ đề năm học"
             className={`px-3 py-1.5 rounded-md font-semibold text-xs transition-colors cursor-pointer ${
               activeTab === 'marquee'
@@ -241,7 +270,7 @@ export function AdminHomepagePage() {
           </button>
           <button
             type="button"
-            onClick={() => setActiveTab('preview')}
+            onClick={() => handleTabChange('preview')}
             aria-label="Chuyển sang chế độ Xem trước trực quan"
             className={`px-3 py-1.5 rounded-md font-semibold text-xs transition-colors cursor-pointer ${
               activeTab === 'preview'

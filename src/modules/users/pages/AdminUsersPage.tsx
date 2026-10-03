@@ -31,6 +31,7 @@ import {
   Clock,
   Phone,
   Mail,
+  UserPlus,
 } from 'lucide-react';
 import { useUsers } from '../hooks/useUsers';
 import { useRoles } from '../hooks/useRoles';
@@ -40,6 +41,7 @@ import { UserRoleBadge } from '../components/UserRoleBadge';
 import { UserStatusBadge } from '../components/UserStatusBadge';
 import { AssignRoleModal } from '../components/AssignRoleModal';
 import { UserEditModal } from '../components/UserEditModal';
+import { UserCreateModal } from '../components/UserCreateModal';
 import { Button } from '../../../components/ui/Button';
 import { BASELINE_ROLES } from '../config/userConfig';
 import type { UserRecord, RoleCode } from '../types/user';
@@ -71,6 +73,7 @@ export const AdminUsersPage: React.FC = () => {
   const [searchInput, setSearchInput] = useState(params.search || '');
 
   // Modals state
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedUserForRole, setSelectedUserForRole] = useState<UserRecord | null>(null);
   const [selectedUserForEdit, setSelectedUserForEdit] = useState<UserRecord | null>(null);
 
@@ -119,6 +122,18 @@ export const AdminUsersPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          {canEditUsers && (
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => setIsCreateModalOpen(true)}
+              className="flex items-center gap-1.5 text-xs bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-xs"
+            >
+              <UserPlus className="h-3.5 w-3.5" />
+              <span>Thêm người dùng mới</span>
+            </Button>
+          )}
+
           <Button
             variant="outline"
             size="sm"
@@ -487,6 +502,16 @@ export const AdminUsersPage: React.FC = () => {
         user={selectedUserForEdit}
         onSuccess={(updated) => {
           showToast(`Đã cập nhật hồ sơ của ${updated.full_name}`);
+          refetch();
+        }}
+      />
+
+      {/* User Create Modal */}
+      <UserCreateModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSuccess={(newUser) => {
+          showToast(`Đã thêm thành công người dùng: ${newUser.full_name}`);
           refetch();
         }}
       />

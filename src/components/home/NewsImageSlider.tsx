@@ -70,6 +70,10 @@ export function NewsImageSlider() {
           key={currentItem.id}
           src={currentItem.thumbnail || '/campus_facade.jpg'}
           alt={currentItem.title}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = '/campus_facade.jpg';
+          }}
           className="w-full h-full object-cover object-center transform scale-100 group-hover:scale-105 transition-transform duration-700 ease-out"
         />
         {/* Layered Gradient Overlays for readable text & visual contrast */}

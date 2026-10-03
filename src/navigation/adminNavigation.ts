@@ -16,6 +16,8 @@ import {
   Settings,
   Activity,
   Globe,
+  Sparkles,
+  Megaphone,
 } from 'lucide-react';
 import { NavigationGroup } from './types';
 
@@ -139,6 +141,22 @@ export const adminNavigationGroups: NavigationGroup[] = [
         label: 'Giao diện trang chủ',
         href: '/admin/homepage',
         icon: Sliders,
+        moduleKey: 'homepage',
+        requiredPermission: 'homepage.view',
+      },
+      {
+        key: 'admin-homepage-marquee',
+        label: 'Chủ đề năm học (Chữ chạy)',
+        href: '/admin/homepage?tab=marquee',
+        icon: Megaphone,
+        moduleKey: 'homepage',
+        requiredPermission: 'homepage.view',
+      },
+      {
+        key: 'admin-homepage-slides',
+        label: 'Thông điệp & Khẩu hiệu',
+        href: '/admin/homepage?tab=slides',
+        icon: Sparkles,
         moduleKey: 'homepage',
         requiredPermission: 'homepage.view',
       },

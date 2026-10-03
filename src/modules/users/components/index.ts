@@ -7,4 +7,5 @@ export { UserRoleBadge } from './UserRoleBadge';
 export { UserStatusBadge } from './UserStatusBadge';
 export { AssignRoleModal } from './AssignRoleModal';
 export { UserEditModal } from './UserEditModal';
+export { UserCreateModal } from './UserCreateModal';
 export { RoleDetailModal } from './RoleDetailModal';

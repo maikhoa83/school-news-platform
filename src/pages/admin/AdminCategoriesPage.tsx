@@ -14,10 +14,13 @@ import {
   AlertCircle,
   Check,
   X,
+  RotateCcw,
+  Sparkles,
 } from 'lucide-react';
 import { useAdminCategories } from '../../hooks/useAdminCategories';
 import { NewsCategory } from '../../types/news';
 import { slugifyVietnamese } from '../../lib/slugify';
+import { syncDefaultSchoolCategories, INITIAL_CATEGORIES } from '../../services/categoryService';
 
 export const AdminCategoriesPage: React.FC = () => {
   const {
@@ -25,13 +28,38 @@ export const AdminCategoriesPage: React.FC = () => {
     isLoading,
     isSubmitting,
     error,
+    refetch,
     createCategory,
     updateCategory,
     deleteCategory,
   } = useAdminCategories();
 
+  const [isRestoring, setIsRestoring] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+
+  const effectiveCategories = categories.length > 0 ? categories : INITIAL_CATEGORIES;
+
+  const handleRestoreDefaultCategories = async () => {
+    setIsRestoring(true);
+    setFeedback(null);
+    try {
+      const res = await syncDefaultSchoolCategories();
+      if (res.success) {
+        setFeedback({
+          text: 'Đã đồng bộ và khôi phục thành công 7 chuyên mục chuẩn của trường!',
+          isError: false,
+        });
+        await refetch();
+      } else {
+        setFeedback({ text: res.error || 'Lỗi khi đồng bộ chuyên mục', isError: true });
+      }
+    } catch {
+      setFeedback({ text: 'Lỗi khi đồng bộ chuyên mục', isError: true });
+    } finally {
+      setIsRestoring(false);
+    }
+  };
 
   // Form State
   const [name, setName] = useState('');
@@ -248,14 +276,26 @@ export const AdminCategoriesPage: React.FC = () => {
         </div>
 
         {!isAdding && !editingId && (
-          <button
-            type="button"
-            onClick={() => handleStartAdd(null)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-semibold shadow-xs transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Thêm chuyên mục gốc</span>
-          </button>
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={handleRestoreDefaultCategories}
+              disabled={isRestoring}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-xl text-xs sm:text-sm font-semibold shadow-2xs transition-colors cursor-pointer disabled:opacity-50"
+              title="Đồng bộ 3 nhóm chuyên mục cha và 7 chuyên mục con chuẩn của trường"
+            >
+              <Sparkles className="w-4 h-4 text-amber-600" />
+              <span>{isRestoring ? 'Đang khôi phục...' : 'Khôi phục 7 chuyên mục chuẩn'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleStartAdd(null)}
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-semibold shadow-xs transition-colors cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Thêm chuyên mục gốc</span>
+            </button>
+          </div>
         )}
       </div>
 
@@ -334,7 +374,7 @@ export const AdminCategoriesPage: React.FC = () => {
                 className="w-full px-3 py-2 text-xs bg-white border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">-- Chuyên mục gốc (Không có cha) --</option>
-                {categories.map((c) => {
+                {effectiveCategories.map((c) => {
                   const isInvalid = invalidParentIds.has(c.id);
                   return (
                     <option key={c.id} value={c.id} disabled={isInvalid}>
@@ -391,7 +431,7 @@ export const AdminCategoriesPage: React.FC = () => {
       <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-2xs">
         {isLoading ? (
           <div className="p-8 text-center text-xs text-neutral-400">Đang tải chuyên mục...</div>
-        ) : categories.length === 0 ? (
+        ) : effectiveCategories.length === 0 ? (
           <div className="p-8 text-center text-xs text-neutral-500">Chưa có chuyên mục nào.</div>
         ) : (
           <div className="overflow-x-auto">
@@ -406,7 +446,7 @@ export const AdminCategoriesPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-100">
-                {categories.map((c) => renderCategoryRow(c))}
+                {effectiveCategories.map((c) => renderCategoryRow(c))}
               </tbody>
             </table>
           </div>

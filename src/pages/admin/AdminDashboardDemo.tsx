@@ -6,6 +6,11 @@ import {
   Bell,
   Image as ImageIcon,
   ChevronRight,
+  Megaphone,
+  Sparkles,
+  Sliders,
+  CalendarCheck,
+  Palette,
 } from 'lucide-react';
 import campusFacadeImg from '../../assets/images/campus_facade.jpg';
 
@@ -141,6 +146,83 @@ export function AdminDashboardDemo() {
             </div>
           );
         })}
+      </div>
+
+      {/* Quick Action Shortcuts for School Customization */}
+      <div className="bg-gradient-to-r from-blue-900 to-indigo-900 rounded-xl p-4 sm:p-5 text-white shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3 pb-3 border-b border-white/10">
+          <div>
+            <h2 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-amber-300" />
+              <span>Thao tác nhanh Cấu hình &amp; Truyền thông</span>
+            </h2>
+            <p className="text-xs text-blue-100/80">
+              Truy cập nhanh các tính năng tùy chỉnh thương hiệu, khẩu hiệu giáo dục và điều hành
+            </p>
+          </div>
+          <Link
+            to="/admin/settings"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-200 hover:text-white transition-colors"
+          >
+            <Palette className="h-3.5 w-3.5" />
+            <span>Cấu hình Logo/Banner</span>
+            <ChevronRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          <Link
+            to="/admin/homepage?tab=marquee"
+            className="flex items-center gap-2.5 p-2.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 transition-all text-xs font-semibold text-white group"
+          >
+            <div className="p-1.5 rounded-md bg-amber-500/20 text-amber-300 shrink-0 group-hover:scale-105 transition-transform">
+              <Megaphone className="h-4 w-4" />
+            </div>
+            <div className="min-w-0">
+              <div className="truncate">Chữ chạy Header</div>
+              <div className="text-[10px] text-blue-200 font-normal truncate">Chủ đề năm học</div>
+            </div>
+          </Link>
+
+          <Link
+            to="/admin/homepage?tab=slides"
+            className="flex items-center gap-2.5 p-2.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 transition-all text-xs font-semibold text-white group"
+          >
+            <div className="p-1.5 rounded-md bg-emerald-500/20 text-emerald-300 shrink-0 group-hover:scale-105 transition-transform">
+              <Sparkles className="h-4 w-4" />
+            </div>
+            <div className="min-w-0">
+              <div className="truncate">Thông điệp giáo dục</div>
+              <div className="text-[10px] text-blue-200 font-normal truncate">Slider ảnh &amp; khẩu hiệu</div>
+            </div>
+          </Link>
+
+          <Link
+            to="/admin/homepage"
+            className="flex items-center gap-2.5 p-2.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 transition-all text-xs font-semibold text-white group"
+          >
+            <div className="p-1.5 rounded-md bg-sky-500/20 text-sky-300 shrink-0 group-hover:scale-105 transition-transform">
+              <Sliders className="h-4 w-4" />
+            </div>
+            <div className="min-w-0">
+              <div className="truncate">Bố cục Trang chủ</div>
+              <div className="text-[10px] text-blue-200 font-normal truncate">Sắp xếp các khối 12 cột</div>
+            </div>
+          </Link>
+
+          <Link
+            to="/admin/announcements/new"
+            className="flex items-center gap-2.5 p-2.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 transition-all text-xs font-semibold text-white group"
+          >
+            <div className="p-1.5 rounded-md bg-purple-500/20 text-purple-300 shrink-0 group-hover:scale-105 transition-transform">
+              <CalendarCheck className="h-4 w-4" />
+            </div>
+            <div className="min-w-0">
+              <div className="truncate">Kế hoạch Tuần/Tháng</div>
+              <div className="text-[10px] text-blue-200 font-normal truncate">Soạn lịch công tác</div>
+            </div>
+          </Link>
+        </div>
       </div>
 
       {/* Row 2: Traffic Line Chart + Recent News */}

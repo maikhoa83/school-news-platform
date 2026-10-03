@@ -24,6 +24,7 @@ import { INITIAL_SEED_VIDEOS, INITIAL_SEED_DOCS } from '../../data/seedMediaData
 import { NewsItem } from '../../types/news';
 import { getPublishedNews } from '../../services/newsService';
 import campusFacadeImg from '../../assets/images/campus_facade.jpg';
+import bannerHoChiMinhImg from '../../assets/images/banner_ho_chi_minh.jpg';
 
 export function HomePage() {
   const [activeMainTab, setActiveMainTab] = useState<'tieudiem' | 'noibat' | 'thongbao'>('tieudiem');
@@ -306,6 +307,10 @@ export function HomePage() {
                 <img
                   src={mainFeaturedPost.thumbnail || campusFacadeImg}
                   alt={mainFeaturedPost.title}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = campusFacadeImg;
+                  }}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <span className="absolute top-3 left-3 bg-[#0052CC] text-white text-xs font-black px-3 py-1 rounded-md uppercase tracking-wider shadow-md">
@@ -403,6 +408,10 @@ export function HomePage() {
                         <img
                           src={item.thumbnail || campusFacadeImg}
                           alt={item.title}
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = campusFacadeImg;
+                          }}
                           className="h-13 w-18 object-cover rounded-lg shrink-0 border border-slate-200"
                         />
                         <div className="min-w-0">
@@ -432,6 +441,10 @@ export function HomePage() {
                         <img
                           src={item.thumbnail || campusFacadeImg}
                           alt={item.title}
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = campusFacadeImg;
+                          }}
                           className="h-13 w-18 object-cover rounded-lg shrink-0 border border-slate-200"
                         />
                         <div className="min-w-0">
@@ -459,8 +472,12 @@ export function HomePage() {
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <img
-                          src={item.thumbnail}
+                          src={item.thumbnail || campusFacadeImg}
                           alt={item.title}
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = campusFacadeImg;
+                          }}
                           className="h-13 w-18 object-cover rounded-lg shrink-0 border border-slate-200"
                         />
                         <div className="min-w-0">
@@ -480,6 +497,45 @@ export function HomePage() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* 4.5. BANNER CHUYÊN ĐỀ ĐẶC BIỆT: HỌC TẬP VÀ LÀM THEO TƯ TƯỞNG, ĐẠO ĐỨC, PHONG CÁCH HỒ CHÍ MINH */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Link
+          to="/chuyen-de/hoc-tap-va-lam-theo-bac"
+          className="group relative block rounded-2xl overflow-hidden border-2 border-amber-400/90 shadow-md hover:shadow-xl transition-all duration-300"
+        >
+          {/* Background image & deep crimson gradient */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#8B0000] via-[#A80000] to-[#7B0000]">
+            <img
+              src={bannerHoChiMinhImg}
+              alt="Học tập và làm theo tư tưởng, đạo đức, phong cách Hồ Chí Minh"
+              className="w-full h-full object-cover mix-blend-overlay opacity-30 group-hover:scale-105 transition-transform duration-700"
+            />
+          </div>
+
+          <div className="relative px-5 py-4 sm:py-5 sm:px-7 flex flex-col md:flex-row items-center justify-between gap-4 text-white">
+            <div className="space-y-1.5 text-center md:text-left">
+              <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-400 text-red-950 font-black text-[11px] uppercase tracking-wider shadow-sm">
+                <Star className="w-3.5 h-3.5 fill-current" />
+                <span>CHUYÊN ĐỀ ĐẶC BIỆT</span>
+              </div>
+              <h2 className="text-base sm:text-lg lg:text-xl font-black text-amber-200 tracking-tight leading-snug drop-shadow-xs uppercase">
+                HỌC TẬP VÀ LÀM THEO TƯ TƯỞNG, ĐẠO ĐỨC, PHONG CÁCH HỒ CHÍ MINH
+              </h2>
+              <p className="text-xs sm:text-sm text-red-100 max-w-2xl font-medium">
+                Tuổi trẻ Trường THCS &amp; THPT Vĩnh Phong rèn đức, luyện tài, học tập và noi gương Bác Hồ vĩ đại
+              </p>
+            </div>
+
+            <div className="shrink-0">
+              <span className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-red-950 font-extrabold text-xs sm:text-sm shadow-md group-hover:scale-105 transition-all">
+                <span>Khám phá Chuyên đề &amp; Bài viết</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </span>
+            </div>
+          </div>
+        </Link>
       </section>
 
       {/* 5. KHỐI 2: 2 CỘT SONG SONG 50% - 50% (HOẠT ĐỘNG NHÀ TRƯỜNG & TRUYỀN THÔNG) */}
@@ -512,6 +568,10 @@ export function HomePage() {
                   <img
                     src={activityBigPost.thumbnail || '/education_slide_study.jpg'}
                     alt={activityBigPost.title}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = campusFacadeImg;
+                    }}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <span className="absolute top-2.5 left-2.5 bg-[#0052CC] text-white text-[10px] font-black px-2.5 py-0.5 rounded-sm uppercase tracking-wider shadow-sm">
@@ -560,6 +620,10 @@ export function HomePage() {
                       <img
                         src={item.thumbnail}
                         alt={item.title}
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = campusFacadeImg;
+                        }}
                         className="h-12 w-16 object-cover rounded-lg shrink-0 border border-slate-200"
                       />
                       <div className="min-w-0">
@@ -608,6 +672,10 @@ export function HomePage() {
                   <img
                     src={mediaBigPost.image}
                     alt={mediaBigPost.title}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = campusFacadeImg;
+                    }}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 </Link>
@@ -643,6 +711,10 @@ export function HomePage() {
                       <img
                         src={card.image}
                         alt={card.title}
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = campusFacadeImg;
+                        }}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>
@@ -730,6 +802,10 @@ export function HomePage() {
                         <img
                           src={album.image}
                           alt={album.title}
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = campusFacadeImg;
+                          }}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       </div>
@@ -750,6 +826,10 @@ export function HomePage() {
                         <img
                           src={video.thumbnail}
                           alt={video.title}
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = campusFacadeImg;
+                          }}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-90"
                         />
                         <div className="absolute inset-0 flex items-center justify-center bg-black/25 group-hover:bg-black/10 transition-colors">

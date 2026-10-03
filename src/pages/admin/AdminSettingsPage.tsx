@@ -15,6 +15,8 @@ import {
   ToggleRight,
   ShieldCheck,
   RotateCcw,
+  Upload,
+  Image as ImageIcon,
 } from 'lucide-react';
 import { useConfig } from '../../hooks/useConfig';
 import { usePermissions } from '../../hooks/usePermissions';
@@ -233,30 +235,187 @@ export function AdminSettingsPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Input
-                    label="Đường dẫn Logo URL"
-                    value={identityForm.logo_url}
-                    onChange={(e) =>
-                      setIdentityForm((prev) => ({ ...prev, logo_url: e.target.value }))
-                    }
-                    disabled={!canEdit}
-                  />
-                  <Input
-                    label="Đường dẫn Favicon URL"
-                    value={identityForm.favicon_url}
-                    onChange={(e) =>
-                      setIdentityForm((prev) => ({ ...prev, favicon_url: e.target.value }))
-                    }
-                    disabled={!canEdit}
-                  />
+                {/* Section: Nhận diện Trực quan & Hình ảnh */}
+                <div className="pt-4 border-t border-slate-200 space-y-4">
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                      <ImageIcon className="w-4 h-4 text-blue-700" />
+                      <span>Hình Ảnh &amp; Nhận Diện Trực Quan</span>
+                    </h3>
+                    <p className="text-slate-500 text-[11px]">
+                      Tải lên hoặc cấu hình hình ảnh Logo, Banner Header và biểu tượng Favicon của trường
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {/* 1. Logo trường học */}
+                    <div className="bg-slate-50 rounded-xl p-3.5 border border-slate-200 space-y-2.5 flex flex-col justify-between">
+                      <div className="space-y-2">
+                        <span className="font-bold text-slate-800 block text-xs">Logo Trường học</span>
+                        <div className="h-24 w-full bg-white rounded-lg border border-slate-200 flex items-center justify-center p-2 overflow-hidden">
+                          <img
+                            src={identityForm.logo_url || '/logo.jpg'}
+                            alt="Logo trường"
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = '/logo.jpg';
+                            }}
+                            className="max-h-full max-w-full object-contain"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        {canEdit && (
+                          <label className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold rounded-lg border border-blue-200 cursor-pointer transition-colors text-xs">
+                            <Upload className="w-3.5 h-3.5" />
+                            <span>Tải logo lên</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  const reader = new FileReader();
+                                  reader.onloadend = () => {
+                                    setIdentityForm((prev) => ({
+                                      ...prev,
+                                      logo_url: reader.result as string,
+                                    }));
+                                  };
+                                  reader.readAsDataURL(file);
+                                }
+                              }}
+                            />
+                          </label>
+                        )}
+                        <Input
+                          label="Hoặc nhập Logo URL"
+                          value={identityForm.logo_url}
+                          onChange={(e) =>
+                            setIdentityForm((prev) => ({ ...prev, logo_url: e.target.value }))
+                          }
+                          disabled={!canEdit}
+                        />
+                      </div>
+                    </div>
+
+                    {/* 2. Banner Header (Đầu trang) */}
+                    <div className="bg-slate-50 rounded-xl p-3.5 border border-slate-200 space-y-2.5 flex flex-col justify-between">
+                      <div className="space-y-2">
+                        <span className="font-bold text-slate-800 block text-xs">Banner Header (Đầu trang)</span>
+                        <div className="h-24 w-full bg-white rounded-lg border border-slate-200 overflow-hidden relative">
+                          <img
+                            src={identityForm.banner_url || '/school_header_pattern.jpg'}
+                            alt="Banner Header"
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = '/school_header_pattern.jpg';
+                            }}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        {canEdit && (
+                          <label className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold rounded-lg border border-blue-200 cursor-pointer transition-colors text-xs">
+                            <Upload className="w-3.5 h-3.5" />
+                            <span>Tải banner lên</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  const reader = new FileReader();
+                                  reader.onloadend = () => {
+                                    setIdentityForm((prev) => ({
+                                      ...prev,
+                                      banner_url: reader.result as string,
+                                    }));
+                                  };
+                                  reader.readAsDataURL(file);
+                                }
+                              }}
+                            />
+                          </label>
+                        )}
+                        <Input
+                          label="Hoặc nhập Banner URL"
+                          value={identityForm.banner_url || ''}
+                          onChange={(e) =>
+                            setIdentityForm((prev) => ({ ...prev, banner_url: e.target.value }))
+                          }
+                          disabled={!canEdit}
+                        />
+                      </div>
+                    </div>
+
+                    {/* 3. Favicon (Biểu tượng tab) */}
+                    <div className="bg-slate-50 rounded-xl p-3.5 border border-slate-200 space-y-2.5 flex flex-col justify-between">
+                      <div className="space-y-2">
+                        <span className="font-bold text-slate-800 block text-xs">Biểu Tượng Favicon</span>
+                        <div className="h-24 w-full bg-white rounded-lg border border-slate-200 flex items-center justify-center p-2">
+                          <div className="w-10 h-10 rounded-lg border border-slate-300 p-1 flex items-center justify-center bg-slate-50">
+                            <img
+                              src={identityForm.favicon_url || '/logo.jpg'}
+                              alt="Favicon"
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = '/logo.jpg';
+                              }}
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        {canEdit && (
+                          <label className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold rounded-lg border border-blue-200 cursor-pointer transition-colors text-xs">
+                            <Upload className="w-3.5 h-3.5" />
+                            <span>Tải favicon lên</span>
+                            <input
+                              type="file"
+                              accept="image/*,.ico"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  const reader = new FileReader();
+                                  reader.onloadend = () => {
+                                    setIdentityForm((prev) => ({
+                                      ...prev,
+                                      favicon_url: reader.result as string,
+                                    }));
+                                  };
+                                  reader.readAsDataURL(file);
+                                }
+                              }}
+                            />
+                          </label>
+                        )}
+                        <Input
+                          label="Hoặc nhập Favicon URL"
+                          value={identityForm.favicon_url}
+                          onChange={(e) =>
+                            setIdentityForm((prev) => ({ ...prev, favicon_url: e.target.value }))
+                          }
+                          disabled={!canEdit}
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {canEdit && (
                   <div className="pt-2">
                     <Button type="submit" variant="primary" size="sm" isLoading={isSaving}>
                       <Save className="h-4 w-4 mr-1.5" />
-                      Lưu Hồ Sơ Nhận Diện
+                      Lưu Toàn Bộ Hồ Sơ &amp; Nhận Diện
                     </Button>
                   </div>
                 )}
