@@ -50,6 +50,7 @@ export interface NewsItem {
   source_url?: string | null;
   status: NewsStatus;
   is_featured: boolean;
+  is_highlight?: boolean;
   view_count: number;
   published_at?: string | null;
   published_by?: string | null;
@@ -94,6 +95,7 @@ export interface NewsFilterParams {
   limit?: number;
   sort?: 'latest' | 'views' | 'oldest';
   isFeatured?: boolean;
+  isHighlight?: boolean;
 }
 
 export interface NewsPaginationResult<T> {

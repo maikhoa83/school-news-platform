@@ -44,6 +44,7 @@ import { LoginPage } from '../pages/auth/LoginPage';
 import { FoundationShowcase } from '../pages/FoundationShowcase';
 import { PublicAlbumsListPage } from '../pages/public/PublicAlbumsListPage';
 import { PublicAlbumDetailPage } from '../pages/public/PublicAlbumDetailPage';
+import { PublicMediaPage } from '../pages/public/PublicMediaPage';
 import { PublicPage } from '../pages/public/PublicPage';
 import { NotFoundState } from '../components/common/NotFoundState';
 import { ProtectedRoute } from '../components/guards/ProtectedRoute';
@@ -132,12 +133,28 @@ export function AppRoutes() {
         <Route path="/activities" element={<GenericPageDemo />} />
         <Route path="/admissions" element={<GenericPageDemo />} />
 
-        {/* Public Albums & Gallery Routes */}
+        {/* Public Media, Albums & Gallery Routes */}
+        <Route
+          path="/media"
+          element={
+            <ModuleGuard moduleKey="albums" moduleName="Thư viện Media">
+              <PublicMediaPage />
+            </ModuleGuard>
+          }
+        />
+        <Route
+          path="/media/:slug"
+          element={
+            <ModuleGuard moduleKey="albums" moduleName="Thư viện Media">
+              <PublicAlbumDetailPage />
+            </ModuleGuard>
+          }
+        />
         <Route
           path="/albums"
           element={
             <ModuleGuard moduleKey="albums" moduleName="Thư viện ảnh">
-              <PublicAlbumsListPage />
+              <PublicMediaPage />
             </ModuleGuard>
           }
         />
@@ -153,7 +170,7 @@ export function AppRoutes() {
           path="/gallery"
           element={
             <ModuleGuard moduleKey="albums" moduleName="Thư viện ảnh">
-              <PublicAlbumsListPage />
+              <PublicMediaPage />
             </ModuleGuard>
           }
         />

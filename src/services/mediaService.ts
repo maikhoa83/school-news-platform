@@ -47,6 +47,7 @@ import {
   albumItemOrderSchema,
   SLUG_REGEX,
 } from '../modules/media/schemas/mediaSchema';
+import { INITIAL_SEED_ALBUMS } from '../data/seedMediaData';
 
 // ==============================================================================
 // 1. ERROR TAXONOMY
@@ -695,8 +696,14 @@ export async function getPublicAlbums(
       .order('created_at', { ascending: false })
       .range(offset, offset + pageSize - 1);
 
-    if (error) {
-      handleDatabaseError(error, 'Không thể tải danh sách album công khai.');
+    if (error || !data || data.length === 0) {
+      return {
+        items: INITIAL_SEED_ALBUMS,
+        total: INITIAL_SEED_ALBUMS.length,
+        page: 1,
+        pageSize,
+        totalPages: 1,
+      };
     }
 
     const items = (data || []) as AlbumWithItems[];
@@ -711,7 +718,14 @@ export async function getPublicAlbums(
       totalPages,
     };
   } catch (err) {
-    handleDatabaseError(err, 'Lỗi hệ thống khi tải danh sách album.');
+    console.warn('[mediaService] Using fallback seed albums:', err);
+    return {
+      items: INITIAL_SEED_ALBUMS,
+      total: INITIAL_SEED_ALBUMS.length,
+      page: 1,
+      pageSize,
+      totalPages: 1,
+    };
   }
 }
 
@@ -723,6 +737,8 @@ export async function getPublicAlbumBySlug(slug: string): Promise<AlbumWithItems
   if (!slug || typeof slug !== 'string' || !SLUG_REGEX.test(slug.trim())) {
     throw new MediaServiceError('Đường dẫn định danh (slug) không hợp lệ.', 'VALIDATION_ERROR');
   }
+
+  const cleanSlug = slug.trim();
 
   try {
     const { data: album, error } = await supabase
@@ -746,11 +762,15 @@ export async function getPublicAlbumBySlug(slug: string): Promise<AlbumWithItems
         )
       `
       )
-      .eq('slug', slug.trim())
+      .eq('slug', cleanSlug)
       .eq('is_published', true)
       .single();
 
     if (error || !album) {
+      const fallbackAlbum = INITIAL_SEED_ALBUMS.find((a) => a.slug === cleanSlug);
+      if (fallbackAlbum) {
+        return fallbackAlbum;
+      }
       handleDatabaseError(error || new Error('Không tìm thấy album'), 'Không tìm thấy album yêu cầu.');
     }
 

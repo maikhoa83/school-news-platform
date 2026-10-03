@@ -33,7 +33,7 @@ export const defaultMobileBottomNavItems: MobileNavItem[] = [
   },
   {
     key: 'mobile-menu',
-    label: 'Thực đơn',
+    label: 'Danh mục',
     href: '#menu',
     icon: Menu,
     isAction: true,

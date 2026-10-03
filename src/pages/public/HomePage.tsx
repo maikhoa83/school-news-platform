@@ -1,58 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  ChevronLeft,
+  Sparkles,
   ChevronRight,
-  Clock,
-  Megaphone,
-  FileText,
-  GraduationCap,
   Calendar,
+  Home,
+  Camera,
+  Film,
+  FileText,
+  Download,
+  GraduationCap,
   Grid,
   Search,
-  Sparkles,
-  Award,
-  Film,
-  Download,
+  Flame,
+  Bell,
+  Star,
 } from 'lucide-react';
-import campusFacadeImg from '../../assets/images/campus_facade.jpg';
-import sloganBannerImg from '../../assets/images/slogan_banner.jpg';
+import { NewsMarqueeTicker } from '../../components/home/NewsMarqueeTicker';
+import { NewsImageSlider } from '../../components/home/NewsImageSlider';
 import { EducationalMessageSlider } from '../../components/home/EducationalMessageSlider';
+import { INITIAL_PUBLISHED_NEWS } from '../../data/seedNewsData';
+import { INITIAL_SEED_VIDEOS, INITIAL_SEED_DOCS } from '../../data/seedMediaData';
+import { NewsItem } from '../../types/news';
+import { getPublishedNews } from '../../services/newsService';
+import campusFacadeImg from '../../assets/images/campus_facade.jpg';
 
 export function HomePage() {
+  const [activeMainTab, setActiveMainTab] = useState<'tieudiem' | 'noibat' | 'thongbao'>('tieudiem');
   const [activeMediaTab, setActiveMediaTab] = useState<'image' | 'video' | 'doc'>('image');
-  const [activeSlide, setActiveSlide] = useState(0);
+  const [newsList, setNewsList] = useState<NewsItem[]>(INITIAL_PUBLISHED_NEWS);
 
-  const heroSlides = [
-    {
-      title: 'Lễ tổng kết năm học 2024 – 2025: Tự hào một chặng đường, vững bước tương lai',
-      date: '29/05/2025',
-      category: 'Hoạt động nhà trường',
-      image: campusFacadeImg,
-      link: '/news',
-    },
-    {
-      title: 'Thầy và trò Trường THCS & THPT Vĩnh Phong thi đua Dạy tốt - Học tốt',
-      date: '20/05/2025',
-      category: 'Sự kiện trọng đại',
-      image: '/education_slide_study.jpg',
-      link: '/news',
-    },
-    {
-      title: 'Hội thi giáo viên dạy giỏi cấp Tỉnh năm học 2024 – 2025',
-      date: '15/05/2025',
-      category: 'Thi đua dạy tốt',
-      image: '/education_slide_growth.jpg',
-      link: '/news',
-    },
-  ];
+  useEffect(() => {
+    getPublishedNews({ limit: 20 })
+      .then((res) => {
+        if (res && res.items && res.items.length > 0) {
+          setNewsList(res.items);
+        }
+      })
+      .catch((err) => {
+        console.warn('[HomePage] Using initial news fallback:', err);
+      });
+  }, []);
 
+  // Quick Shortcuts (Giữ nguyên các tiện ích)
   const quickShortcuts = [
     {
       title: 'Tuyển sinh',
       desc: 'Thông tin tuyển sinh',
       icon: GraduationCap,
-      href: '/admissions',
+      href: '/news?cat=tuyen-sinh-dau-cap',
     },
     {
       title: 'Lịch công tác',
@@ -74,87 +70,136 @@ export function HomePage() {
     },
   ];
 
-  const latestNews = [
-    {
-      id: '1',
-      title: 'Lễ tổng kết năm học 2024 – 2025: Tự hào một chặng đường, vững bước tương lai',
-      date: '29/05/2025',
-      image: campusFacadeImg,
-      href: '/news/le-tong-ket-nam-hoc-2024-2025',
-    },
-    {
-      id: '2',
-      title: 'Sinh hoạt chuyên môn cụm trường lần thứ II năm học 2024 – 2025',
-      date: '27/05/2025',
-      image: '/education_slide_study.jpg',
-      href: '/news/2',
-    },
-    {
-      id: '3',
-      title: 'Đoàn trường tổ chức chương trình "Tiếp sức mùa thi 2025"',
-      date: '26/05/2025',
-      image: '/education_slide_growth.jpg',
-      href: '/news/3',
-    },
-    {
-      id: '4',
-      title: 'Giáo viên nhà trường đạt danh hiệu Giáo viên giỏi cấp Tỉnh',
-      date: '25/05/2025',
-      image: sloganBannerImg,
-      href: '/news/4',
-    },
-  ];
+  // 1. Data for Block 1: TIN TỨC MỚI NHẤT
+  // Main Big Featured post (Lễ tổng kết)
+  const mainFeaturedPost =
+    newsList.find((n) => n.slug === 'le-tong-ket-nam-hoc-2024-2025') || newsList[0];
 
-  const latestAnnouncements = [
+  // Tab 1: Tin Tiêu điểm (5 bài)
+  const tieuDiemItems = newsList
+    .filter((n) => n.is_featured)
+    .slice(0, 5);
+
+  // Tab 2: Tin Nổi bật (5 bài)
+  const noiBatItems = newsList
+    .filter((n) => n.is_highlight || n.is_featured)
+    .slice(0, 5);
+
+  // Tab 3: Thông báo mới (5 bài)
+  const announcementsList = [
     {
-      id: '1',
-      title: 'Thông báo về việc nghỉ lễ 30/4 và 01/5',
+      id: 'tb-1',
+      title: 'Thông báo về việc nghỉ lễ 30/4 và 01/5 năm học 2024 – 2025',
       date: '22/04/2025',
       href: '/announcements',
+      thumbnail: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=300&auto=format&fit=crop&q=80',
     },
     {
-      id: '2',
+      id: 'tb-2',
       title: 'Thông báo tổ chức thi học kỳ II năm học 2024 – 2025',
       date: '16/04/2025',
       href: '/announcements',
+      thumbnail: '/education_slide_study.jpg',
     },
     {
-      id: '3',
+      id: 'tb-3',
       title: 'Thông báo tuyển sinh vào lớp 6 và lớp 10 năm học mới',
       date: '10/04/2025',
       href: '/announcements',
+      thumbnail: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=300&auto=format&fit=crop&q=80',
     },
     {
-      id: '4',
-      title: 'Thông báo về việc triển khai học bổng khuyến học cho học sinh vượt khó',
+      id: 'tb-4',
+      title: 'Thông báo triển khai học bổng khuyến học cho học sinh vượt khó',
       date: '05/04/2025',
       href: '/announcements',
+      thumbnail: '/education_slide_growth.jpg',
+    },
+    {
+      id: 'tb-5',
+      title: 'Lịch sinh hoạt Chi bộ và Hội đồng sư phạm tháng 05/2025',
+      date: '02/05/2025',
+      href: '/announcements',
+      thumbnail: '/campus_facade.jpg',
     },
   ];
 
-  const spotlightSideNews = [
-    {
-      title: 'Sinh hoạt chuyên môn cụm trường lần thứ II năm học 2024 – 2025',
-      date: '27/05/2025',
-      image: '/education_slide_study.jpg',
-    },
+  // 2. Data for Block 2 Left: HOẠT ĐỘNG NHÀ TRƯỜNG
+  // Big Activity Post (Sinh hoạt chuyên môn cụm trường)
+  const activityBigPost =
+    newsList.find((n) => n.slug === 'sinh-hoat-chuyen-mon-cum-truong-lan-thu-ii-nam-hoc-2024-2025') ||
+    newsList[0];
+
+  // 5 Activity items on the right side of Hoạt động nhà trường
+  const activitySideItems = [
     {
       title: 'Đoàn trường tổ chức chương trình "Tiếp sức mùa thi 2025"',
       date: '26/05/2025',
-      image: '/education_slide_growth.jpg',
+      slug: 'doan-truong-to-chuc-chuong-trinh-tiep-suc-mua-thi-2025',
+      thumbnail: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=300&auto=format&fit=crop&q=80',
     },
     {
       title: 'Giáo viên nhà trường đạt danh hiệu Giáo viên giỏi cấp Tỉnh',
-      date: '25/05/2025',
-      image: sloganBannerImg,
+      date: '10/04/2025',
+      slug: 'giao-vien-nha-truong-dat-danh-hieu-giao-vien-gioi-cap-tinh',
+      thumbnail: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?w=300&auto=format&fit=crop&q=80',
     },
     {
-      title: 'Học sinh tham gia hội thi Khoa học Kỹ thuật và Tin học trẻ',
+      title: 'Thông báo tuyển sinh vào lớp 6 và lớp 10 năm học mới',
+      date: '10/04/2025',
+      slug: 'thong-bao-tuyen-sinh-vao-lop-6-va-lop-10-nam-hoc-moi',
+      thumbnail: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=300&auto=format&fit=crop&q=80',
+    },
+    {
+      title: 'Học sinh tham gia hội thi Khoa học Kỹ thuật và đạt giải Nhì cấp Tỉnh',
       date: '24/05/2025',
-      image: campusFacadeImg,
+      slug: 'hoc-sinh-tham-gia-hoi-thi-khoa-hoc-ky-thuat',
+      thumbnail: 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?w=300&auto=format&fit=crop&q=80',
+    },
+    {
+      title: 'Trường tổ chức giao lưu thể thao chào mừng ngày 30/4 – 1/5',
+      date: '28/04/2025',
+      slug: 'truong-to-chuc-giao-luu-the-thao-chao-mung-ngay-30-4-1-5',
+      thumbnail: 'https://images.unsplash.com/photo-1526676037777-05a232554f77?w=300&auto=format&fit=crop&q=80',
     },
   ];
 
+  // 3. Data for Block 2 Right: TRUYỀN THÔNG
+  // Top Big Media Post (Hội thi chuyên môn và sinh hoạt văn nghệ)
+  const mediaBigPost = {
+    title: 'Hội thi chuyên môn và sinh hoạt văn nghệ chào mừng ngày truyền thống nhà trường',
+    slug: 'hoi-thi-chuyen-mon-va-sinh-hoat-van-nghe-chao-mung-ngay-truyen-thong-nha-truong',
+    date: '24/05/2025',
+    image: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=900&auto=format&fit=crop&q=80',
+    excerpt:
+      'Phong trào thi đua là sân chơi bổ ích, tạo cơ hội để học sinh thể hiện tài năng, nuôi dưỡng niềm đam mê nghệ thuật và tăng cường sự đoàn kết, gắn bó trong toàn trường.',
+  };
+
+  // 4 Bottom Image Cards for TRUYỀN THÔNG (Matching Bo tri tin chuan_OK.png)
+  const mediaFourCards = [
+    {
+      title: 'Ngày hội đọc sách và văn hóa học đường',
+      image: '/education_slide_study.jpg',
+      link: '/news?cat=truyen-thong',
+    },
+    {
+      title: 'Giải bóng đá học sinh khối 10',
+      image: 'https://images.unsplash.com/photo-1526676037777-05a232554f77?w=500&auto=format&fit=crop&q=80',
+      link: '/news?cat=truyen-thong',
+    },
+    {
+      title: 'Tham quan trải nghiệm di tích lịch sử',
+      image: 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=500&auto=format&fit=crop&q=80',
+      link: '/news?cat=truyen-thong',
+    },
+    {
+      title: 'Chương trình "Vì môi trường xanh"',
+      image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=500&auto=format&fit=crop&q=80',
+      link: '/news?cat=truyen-thong',
+    },
+  ];
+
+  // 4. Data for Block 3: THƯ VIỆN MEDIA & VĂN BẢN MỚI
   const mediaAlbums = [
     {
       title: 'Lễ chào cờ đầu tuần và phát động phong trào Dạy tốt - Học tốt',
@@ -170,7 +215,7 @@ export function HomePage() {
     },
     {
       title: 'Lễ tri ân và trưởng thành của học sinh khối 12',
-      image: sloganBannerImg,
+      image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=500&auto=format&fit=crop&q=80',
     },
   ];
 
@@ -181,7 +226,7 @@ export function HomePage() {
       date: '28/05/2025',
     },
     {
-      title: 'Hướng dẫn công tác coi thi và chấm thi học kỳ II',
+      title: 'Hướng dẫn công tác coi thi và chấm thi học kỳ II năm học 2024 – 2025',
       size: '850 KB',
       date: '20/05/2025',
     },
@@ -198,88 +243,16 @@ export function HomePage() {
   ];
 
   return (
-    <div className="space-y-6 sm:space-y-8 pb-12">
-      {/* 1. HERO CAROUSEL BANNER */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-        <div className="relative rounded-2xl overflow-hidden shadow-md h-72 sm:h-96 md:h-[460px] bg-slate-900 group">
-          {/* Slide Image */}
-          <img
-            src={heroSlides[activeSlide].image}
-            alt={heroSlides[activeSlide].title}
-            className="w-full h-full object-cover transition-transform duration-700"
-          />
+    <div className="space-y-6 sm:space-y-8 pb-16 bg-slate-50/50">
+      {/* 1. DÒNG CHỮ CHẠY NGANG: CHỦ ĐỀ NĂM HỌC / THÁNG (Bố trí giữa Menu ngang và Slider tin) */}
+      <NewsMarqueeTicker />
 
-          {/* Dark Overlay Gradient for Readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent" />
-
-          {/* Navigation Arrows */}
-          <button
-            type="button"
-            onClick={() =>
-              setActiveSlide((prev) =>
-                prev === 0 ? heroSlides.length - 1 : prev - 1
-              )
-            }
-            aria-label="Slide trước"
-            className="absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center backdrop-blur-xs transition-colors z-20"
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </button>
-          <button
-            type="button"
-            onClick={() =>
-              setActiveSlide((prev) =>
-                prev === heroSlides.length - 1 ? 0 : prev + 1
-              )
-            }
-            aria-label="Slide tiếp theo"
-            className="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center backdrop-blur-xs transition-colors z-20"
-          >
-            <ChevronRight className="h-6 w-6" />
-          </button>
-
-          {/* Overlay Card matching school branding (Bottom Left) */}
-          <div className="absolute bottom-6 left-6 right-6 sm:right-auto sm:max-w-xl bg-black/70 backdrop-blur-md p-5 rounded-xl border border-white/15 text-white space-y-3 z-10">
-            <span className="inline-block px-2.5 py-0.5 rounded-sm bg-[#0052CC] text-white text-[11px] font-bold uppercase tracking-wider">
-              TIN TỨC NỔI BẬT
-            </span>
-            <h2 className="text-base sm:text-xl font-bold leading-snug line-clamp-2 text-white">
-              {heroSlides[activeSlide].title}
-            </h2>
-            <div className="flex items-center gap-2 text-xs text-slate-300">
-              <Clock className="h-3.5 w-3.5 text-amber-300" />
-              <span>{heroSlides[activeSlide].date}</span>
-              <span>•</span>
-              <span>{heroSlides[activeSlide].category}</span>
-            </div>
-            <div>
-              <Link
-                to={heroSlides[activeSlide].link}
-                className="inline-block bg-amber-400 hover:bg-amber-300 text-blue-950 text-xs font-bold px-4 py-2 rounded-md transition-colors shadow-sm"
-              >
-                Xem chi tiết
-              </Link>
-            </div>
-          </div>
-
-          {/* Pagination dots */}
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
-            {heroSlides.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => setActiveSlide(i)}
-                aria-label={`Chuyển đến slide ${i + 1}`}
-                className={`h-2 rounded-full transition-all ${
-                  activeSlide === i ? 'w-6 bg-amber-400' : 'w-2 bg-white/50 hover:bg-white/80'
-                }`}
-              />
-            ))}
-          </div>
-        </div>
+      {/* 2. SLIDER ẢNH TIN TỨC (BÊN TRÊN GẦN MENU NGANG) */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <NewsImageSlider />
       </section>
 
-      {/* 2. FOUR QUICK SHORTCUT CARDS */}
+      {/* 3. BỐN PHÍM TẮT TRUY CẬP NHANH (QUICK SHORTCUTS) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           {quickShortcuts.map((sc, idx) => {
@@ -297,9 +270,7 @@ export function HomePage() {
                   <h3 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-[#003B8E] transition-colors">
                     {sc.title}
                   </h3>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    {sc.desc}
-                  </p>
+                  <p className="text-xs text-slate-500 mt-0.5">{sc.desc}</p>
                 </div>
               </Link>
             );
@@ -307,253 +278,391 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* 3. LATEST NEWS (8 Cols) & ANNOUNCEMENTS (4 Cols) */}
+      {/* 4. KHỐI 1: ⭐ TIN TỨC MỚI NHẤT (CHUẨN THEO Bo tri tin chuan_OK.png) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left: Tin tức mới nhất (8 cols) */}
-          <div className="lg:col-span-8 space-y-4">
-            {/* Header with primary color background */}
-            <div className="bg-gradient-to-r from-[#002b66] to-[#003B8E] text-white px-4 py-2.5 rounded-xl shadow-xs flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-amber-300" />
-                <h2 className="text-sm sm:text-base font-bold text-white uppercase tracking-wide">
-                  TIN TỨC MỚI NHẤT
-                </h2>
-              </div>
-              <Link
-                to="/news"
-                className="text-xs text-amber-300 hover:text-white font-semibold inline-flex items-center gap-0.5 transition-colors"
-              >
-                <span>Xem tất cả</span>
-                <ChevronRight className="h-3.5 w-3.5" />
-              </Link>
+        <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+          {/* Header Bar */}
+          <div className="bg-gradient-to-r from-[#002b66] via-[#003B8E] to-[#0284c7] text-white px-5 py-3 flex items-center justify-between shadow-xs">
+            <div className="flex items-center gap-2.5">
+              <Star className="h-5 w-5 text-amber-300 fill-amber-300" />
+              <h2 className="text-sm sm:text-base font-extrabold text-white uppercase tracking-wider">
+                TIN TỨC MỚI NHẤT
+              </h2>
             </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {latestNews.map((item) => (
-                <Link
-                  key={item.id}
-                  to={item.href}
-                  className="bg-white rounded-xl border border-slate-200/90 overflow-hidden shadow-2xs hover:shadow-md hover:border-blue-400 transition-all group flex flex-col"
-                >
-                  <div className="h-32 w-full overflow-hidden bg-slate-100 shrink-0">
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                  <div className="p-3 flex-1 flex flex-col justify-between space-y-2">
-                    <span className="text-[11px] text-slate-400">
-                      {item.date}
-                    </span>
-                    {/* H3 increased by ~15-20% */}
-                    <h3 className="text-sm font-bold text-slate-900 group-hover:text-[#003B8E] transition-colors line-clamp-3 leading-snug">
-                      {item.title}
-                    </h3>
-                  </div>
-                </Link>
-              ))}
-            </div>
+            <Link
+              to="/news"
+              className="text-xs text-amber-300 hover:text-white font-bold inline-flex items-center gap-1 transition-colors"
+            >
+              <span>Xem tất cả</span>
+              <ChevronRight className="h-4 w-4" />
+            </Link>
           </div>
 
-          {/* Right: Thông báo mới (4 cols) */}
-          <div className="lg:col-span-4 space-y-4">
-            {/* Header with primary color background */}
-            <div className="bg-gradient-to-r from-[#002b66] to-[#003B8E] text-white px-4 py-2.5 rounded-xl shadow-xs flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Megaphone className="h-5 w-5 text-amber-300" />
-                <h2 className="text-sm sm:text-base font-bold text-white uppercase tracking-wide">
-                  THÔNG BÁO MỚI
-                </h2>
+          {/* Body Content: Split 50% - 50% */}
+          <div className="p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Cột Trái: 1 Tin lớn nổi bật */}
+            <div className="lg:col-span-6 flex flex-col justify-between space-y-3.5">
+              <div className="relative rounded-xl overflow-hidden h-60 sm:h-72 w-full bg-slate-100 group">
+                <img
+                  src={mainFeaturedPost.thumbnail || campusFacadeImg}
+                  alt={mainFeaturedPost.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <span className="absolute top-3 left-3 bg-[#0052CC] text-white text-xs font-black px-3 py-1 rounded-md uppercase tracking-wider shadow-md">
+                  TIN NỔI BẬT
+                </span>
               </div>
+
+              <div className="text-xs text-slate-400 flex items-center gap-1.5 font-medium">
+                <Calendar className="h-3.5 w-3.5 text-slate-400" />
+                <span>
+                  {mainFeaturedPost.published_at
+                    ? new Date(mainFeaturedPost.published_at).toLocaleDateString('vi-VN')
+                    : '29/05/2025'}
+                </span>
+              </div>
+
               <Link
-                to="/announcements"
-                className="text-xs text-amber-300 hover:text-white font-semibold inline-flex items-center gap-0.5 transition-colors"
+                to={`/news/${mainFeaturedPost.slug}`}
+                className="group block"
               >
-                <span>Xem tất cả</span>
-                <ChevronRight className="h-3.5 w-3.5" />
+                <h3 className="text-base sm:text-xl font-bold text-slate-900 group-hover:text-[#003B8E] leading-snug line-clamp-2 transition-colors">
+                  {mainFeaturedPost.title}
+                </h3>
               </Link>
+
+              <p className="text-xs sm:text-sm text-slate-600 line-clamp-3 leading-relaxed">
+                {mainFeaturedPost.excerpt}
+              </p>
+
+              <div>
+                <Link
+                  to={`/news/${mainFeaturedPost.slug}`}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#003B8E] hover:bg-blue-800 text-white font-bold text-xs shadow-xs transition-colors"
+                >
+                  <span>Xem chi tiết</span>
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
             </div>
 
-            <div className="bg-white rounded-xl border border-slate-200/90 p-4 divide-y divide-slate-100 shadow-2xs space-y-3">
-              {latestAnnouncements.map((item) => (
-                <Link
-                  key={item.id}
-                  to={item.href}
-                  className="pt-3 first:pt-0 flex items-start gap-3 group block"
+            {/* Cột Phải: Card với 3 Tab (Tin Tiêu điểm, Tin nổi bật, Thông báo) */}
+            <div className="lg:col-span-6 flex flex-col bg-slate-50/70 rounded-xl border border-slate-200 overflow-hidden">
+              {/* Tabs Switcher Header */}
+              <div className="grid grid-cols-3 border-b border-slate-200 bg-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setActiveMainTab('tieudiem')}
+                  className={`py-3 px-2 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                    activeMainTab === 'tieudiem'
+                      ? 'bg-[#003B8E] text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                  }`}
                 >
-                  <Megaphone className="h-4 w-4 text-red-500 shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
-                  <div className="flex-1 min-w-0">
-                    {/* H3 increased by ~15-20% */}
-                    <h3 className="text-sm font-semibold text-slate-800 group-hover:text-[#003B8E] transition-colors line-clamp-2 leading-tight">
-                      {item.title}
-                    </h3>
-                    <span className="text-[11px] text-slate-400 mt-1 block">
-                      {item.date}
-                    </span>
-                  </div>
-                </Link>
-              ))}
+                  <Star className="h-3.5 w-3.5 text-amber-300" />
+                  <span>Tin Tiêu điểm</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveMainTab('noibat')}
+                  className={`py-3 px-2 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                    activeMainTab === 'noibat'
+                      ? 'bg-[#003B8E] text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                  }`}
+                >
+                  <Flame className="h-3.5 w-3.5 text-amber-400" />
+                  <span>Tin nổi bật</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveMainTab('thongbao')}
+                  className={`py-3 px-2 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                    activeMainTab === 'thongbao'
+                      ? 'bg-[#003B8E] text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                  }`}
+                >
+                  <Bell className="h-3.5 w-3.5 text-red-400" />
+                  <span>Thông báo</span>
+                </button>
+              </div>
+
+              {/* Tab Content List (5 items) */}
+              <div className="p-3 sm:p-4 divide-y divide-slate-100 flex-1 flex flex-col justify-between">
+                {activeMainTab === 'tieudiem' &&
+                  tieuDiemItems.map((item) => (
+                    <Link
+                      key={item.id}
+                      to={`/news/${item.slug}`}
+                      className="py-2.5 first:pt-0 last:pb-0 flex items-center justify-between gap-3 group hover:bg-white px-2 rounded-lg transition-colors"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <img
+                          src={item.thumbnail || campusFacadeImg}
+                          alt={item.title}
+                          className="h-13 w-18 object-cover rounded-lg shrink-0 border border-slate-200"
+                        />
+                        <div className="min-w-0">
+                          <h4 className="text-xs sm:text-sm font-semibold text-slate-800 group-hover:text-[#003B8E] line-clamp-2 leading-snug transition-colors">
+                            {item.title}
+                          </h4>
+                          <span className="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            {item.published_at
+                              ? new Date(item.published_at).toLocaleDateString('vi-VN')
+                              : '29/05/2025'}
+                          </span>
+                        </div>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-[#003B8E] group-hover:translate-x-0.5 transition-transform shrink-0" />
+                    </Link>
+                  ))}
+
+                {activeMainTab === 'noibat' &&
+                  noiBatItems.map((item) => (
+                    <Link
+                      key={item.id}
+                      to={`/news/${item.slug}`}
+                      className="py-2.5 first:pt-0 last:pb-0 flex items-center justify-between gap-3 group hover:bg-white px-2 rounded-lg transition-colors"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <img
+                          src={item.thumbnail || campusFacadeImg}
+                          alt={item.title}
+                          className="h-13 w-18 object-cover rounded-lg shrink-0 border border-slate-200"
+                        />
+                        <div className="min-w-0">
+                          <h4 className="text-xs sm:text-sm font-semibold text-slate-800 group-hover:text-[#003B8E] line-clamp-2 leading-snug transition-colors">
+                            {item.title}
+                          </h4>
+                          <span className="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            {item.published_at
+                              ? new Date(item.published_at).toLocaleDateString('vi-VN')
+                              : '27/05/2025'}
+                          </span>
+                        </div>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-[#003B8E] group-hover:translate-x-0.5 transition-transform shrink-0" />
+                    </Link>
+                  ))}
+
+                {activeMainTab === 'thongbao' &&
+                  announcementsList.map((item) => (
+                    <Link
+                      key={item.id}
+                      to={item.href}
+                      className="py-2.5 first:pt-0 last:pb-0 flex items-center justify-between gap-3 group hover:bg-white px-2 rounded-lg transition-colors"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <img
+                          src={item.thumbnail}
+                          alt={item.title}
+                          className="h-13 w-18 object-cover rounded-lg shrink-0 border border-slate-200"
+                        />
+                        <div className="min-w-0">
+                          <h4 className="text-xs sm:text-sm font-semibold text-slate-800 group-hover:text-[#003B8E] line-clamp-2 leading-snug transition-colors">
+                            {item.title}
+                          </h4>
+                          <span className="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            {item.date}
+                          </span>
+                        </div>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-[#003B8E] group-hover:translate-x-0.5 transition-transform shrink-0" />
+                    </Link>
+                  ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 4. TIÊU ĐIỂM (6 Cols) & HOẠT ĐỘNG NỔI BẬT (6 Cols) WITH DISTINCT FRAMED CONTAINERS */}
+      {/* 5. KHỐI 2: 2 CỘT SONG SONG 50% - 50% (HOẠT ĐỘNG NHÀ TRƯỜNG & TRUYỀN THÔNG) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Cột Trái: TIÊU ĐIỂM (6 cols) - Framed Container */}
-          <div className="lg:col-span-6 space-y-3 p-4 sm:p-5 rounded-2xl border-2 border-blue-900/15 bg-slate-50/40 shadow-xs">
-            {/* Header bar: Primary color background + Icon before H2 */}
-            <div className="bg-gradient-to-r from-[#002b66] to-[#003B8E] text-white px-4 py-2.5 rounded-xl shadow-xs flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-amber-300" />
-                <h2 className="text-sm sm:text-base font-bold text-white uppercase tracking-wide">
-                  TIÊU ĐIỂM
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* CỘT TRÁI: 🏠 HOẠT ĐỘNG NHÀ TRƯỜNG */}
+          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden flex flex-col justify-between">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-[#002b66] to-[#003B8E] text-white px-5 py-3 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <Home className="h-5 w-5 text-amber-300" />
+                <h2 className="text-sm sm:text-base font-extrabold text-white uppercase tracking-wider">
+                  HOẠT ĐỘNG NHÀ TRƯỜNG
                 </h2>
               </div>
               <Link
-                to="/news"
-                className="text-xs text-amber-300 hover:text-white font-semibold inline-flex items-center gap-0.5 transition-colors"
+                to="/news?cat=hoat-dong-nha-truong"
+                className="text-xs text-amber-300 hover:text-white font-bold inline-flex items-center gap-1 transition-colors"
               >
                 <span>Xem tất cả</span>
-                <ChevronRight className="h-3.5 w-3.5" />
+                <ChevronRight className="h-4 w-4" />
               </Link>
             </div>
 
-            <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs grid grid-cols-1 sm:grid-cols-12 gap-4">
-              {/* Left Sub-col: Big Spotlight Article */}
-              <div className="sm:col-span-7 space-y-2.5">
-                <div className="relative rounded-lg overflow-hidden h-44 bg-slate-100">
+            {/* Inner Split: 50% Nửa Trái + 50% Nửa Phải */}
+            <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-5 flex-1">
+              {/* Nửa Trái: 1 Tin Nổi Bật Lớn */}
+              <div className="flex flex-col justify-between space-y-3">
+                <div className="relative rounded-xl overflow-hidden h-44 w-full bg-slate-100 group">
                   <img
-                    src={campusFacadeImg}
-                    alt="Tiêu điểm"
-                    className="w-full h-full object-cover"
+                    src={activityBigPost.thumbnail || '/education_slide_study.jpg'}
+                    alt={activityBigPost.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <span className="absolute top-2 left-2 bg-[#0052CC] text-white text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase shadow-xs">
+                  <span className="absolute top-2.5 left-2.5 bg-[#0052CC] text-white text-[10px] font-black px-2.5 py-0.5 rounded-sm uppercase tracking-wider shadow-sm">
                     NỔI BẬT
                   </span>
                 </div>
-                <div className="text-xs text-slate-400 flex items-center gap-1">
-                  <Clock className="h-3.5 w-3.5 text-slate-400" />
+
+                <div className="text-xs text-slate-400 flex items-center gap-1.5 font-medium">
+                  <Calendar className="h-3.5 w-3.5 text-slate-400" />
                   <span>29/05/2025</span>
                 </div>
-                {/* H3 increased by ~15-20% */}
-                <h3 className="text-sm sm:text-base font-bold text-slate-900 leading-snug line-clamp-2">
-                  Lễ tổng kết năm học 2024 – 2025: Tự hào một chặng đường, vững bước tương lai
-                </h3>
+
+                <Link
+                  to={`/news/${activityBigPost.slug}`}
+                  className="group block"
+                >
+                  <h3 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-[#003B8E] leading-snug line-clamp-2 transition-colors">
+                    {activityBigPost.title}
+                  </h3>
+                </Link>
+
                 <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
-                  Sáng ngày 29/05/2025, Trường THCS &amp; THPT Vĩnh Phong đã long trọng tổ chức Lễ tổng kết năm học 2024 – 2025. Buổi lễ là dịp để thầy và trò cùng nhìn lại một năm học với nhiều nỗ lực, thành tích đáng tự hào...
+                  {activityBigPost.excerpt}
                 </p>
+
                 <div>
                   <Link
-                    to="/news"
-                    className="inline-block bg-[#003B8E] hover:bg-blue-800 text-white text-xs font-semibold px-3.5 py-1.5 rounded-md transition-colors shadow-xs"
+                    to={`/news/${activityBigPost.slug}`}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#003B8E] hover:bg-blue-800 text-white font-bold text-xs shadow-xs transition-colors"
                   >
-                    Xem chi tiết
+                    <span>Xem chi tiết</span>
+                    <ChevronRight className="h-3.5 w-3.5" />
                   </Link>
                 </div>
               </div>
 
-              {/* Right Sub-col: compact news items */}
-              <div className="sm:col-span-5 space-y-3 divide-y divide-slate-100">
-                {spotlightSideNews.map((item, idx) => (
-                  <div key={idx} className="pt-2.5 first:pt-0 flex items-start gap-2.5 group">
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="h-14 w-16 object-cover rounded-md shrink-0 bg-slate-100 border border-slate-200"
-                    />
-                    <div className="min-w-0">
-                      {/* H3/H4 increased font size */}
-                      <h3 className="text-xs sm:text-sm font-semibold text-slate-800 group-hover:text-[#003B8E] line-clamp-2 leading-tight transition-colors">
-                        {item.title}
-                      </h3>
-                      <span className="text-[10px] text-slate-400 mt-1 block">
-                        {item.date}
-                      </span>
+              {/* Nửa Phải: Danh sách 5 tin hoạt động nhỏ */}
+              <div className="divide-y divide-slate-100 flex flex-col justify-between">
+                {activitySideItems.map((item, idx) => (
+                  <Link
+                    key={idx}
+                    to={`/news/${item.slug}`}
+                    className="py-2.5 first:pt-0 last:pb-0 flex items-center justify-between gap-2.5 group hover:bg-slate-50 px-2 rounded-lg transition-colors"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <img
+                        src={item.thumbnail}
+                        alt={item.title}
+                        className="h-12 w-16 object-cover rounded-lg shrink-0 border border-slate-200"
+                      />
+                      <div className="min-w-0">
+                        <h4 className="text-xs font-semibold text-slate-800 group-hover:text-[#003B8E] line-clamp-2 leading-snug transition-colors">
+                          {item.title}
+                        </h4>
+                        <span className="text-[10px] text-slate-400 mt-1 flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          {item.date}
+                        </span>
+                      </div>
                     </div>
-                  </div>
+                    <ChevronRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-[#003B8E] group-hover:translate-x-0.5 transition-transform shrink-0" />
+                  </Link>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Cột Phải: HOẠT ĐỘNG NỔI BẬT (6 cols) - Framed Container */}
-          <div className="lg:col-span-6 space-y-3 p-4 sm:p-5 rounded-2xl border-2 border-blue-900/15 bg-slate-50/40 shadow-xs">
-            {/* Header bar: Primary color background + Icon before H2 */}
-            <div className="bg-gradient-to-r from-[#002b66] to-[#003B8E] text-white px-4 py-2.5 rounded-xl shadow-xs flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Award className="h-5 w-5 text-amber-300" />
-                <h2 className="text-sm sm:text-base font-bold text-white uppercase tracking-wide">
-                  HOẠT ĐỘNG NỔI BẬT
+          {/* CỘT PHẢI: 📷 TRUYỀN THÔNG */}
+          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden flex flex-col justify-between">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-[#002b66] to-[#003B8E] text-white px-5 py-3 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <Camera className="h-5 w-5 text-amber-300" />
+                <h2 className="text-sm sm:text-base font-extrabold text-white uppercase tracking-wider">
+                  TRUYỀN THÔNG
                 </h2>
               </div>
               <Link
-                to="/activities"
-                className="text-xs text-amber-300 hover:text-white font-semibold inline-flex items-center gap-0.5 transition-colors"
+                to="/news?cat=truyen-thong"
+                className="text-xs text-amber-300 hover:text-white font-bold inline-flex items-center gap-1 transition-colors"
               >
                 <span>Xem tất cả</span>
-                <ChevronRight className="h-3.5 w-3.5" />
+                <ChevronRight className="h-4 w-4" />
               </Link>
             </div>
 
-            <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs space-y-3">
-              {/* Featured Activity Image */}
-              <div className="relative rounded-lg overflow-hidden h-48 bg-slate-100">
-                <img
-                  src="/education_slide_study.jpg"
-                  alt="Hoạt động nổi bật"
-                  className="w-full h-full object-cover"
-                />
-                <span className="absolute top-2 left-2 bg-[#0052CC] text-white text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase shadow-xs">
-                  NỔI BẬT
-                </span>
-              </div>
+            <div className="p-5 space-y-4 flex-1 flex flex-col justify-between">
+              {/* Phần Trên: 1 Bài truyền thông lớn toàn chiều ngang */}
+              <div className="space-y-2.5">
+                <Link
+                  to={`/news/${mediaBigPost.slug}`}
+                  className="block relative rounded-xl overflow-hidden h-48 sm:h-52 w-full bg-slate-100 group"
+                >
+                  <img
+                    src={mediaBigPost.image}
+                    alt={mediaBigPost.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </Link>
 
-              <div className="space-y-1">
-                <div className="text-xs text-slate-400 flex items-center gap-1">
-                  <Clock className="h-3.5 w-3.5 text-slate-400" />
-                  <span>24/05/2025</span>
+                <div className="text-xs text-slate-400 flex items-center gap-1.5 font-medium">
+                  <Calendar className="h-3.5 w-3.5 text-slate-400" />
+                  <span>{mediaBigPost.date}</span>
                 </div>
-                {/* H3 increased by ~15-20% */}
-                <h3 className="text-sm sm:text-base font-bold text-slate-900 leading-snug">
-                  Hội thi chuyên môn và sinh hoạt văn nghệ chào mừng ngày truyền thống nhà trường
-                </h3>
+
+                <Link
+                  to={`/news/${mediaBigPost.slug}`}
+                  className="group block"
+                >
+                  <h3 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-[#003B8E] leading-snug line-clamp-2 transition-colors">
+                    {mediaBigPost.title}
+                  </h3>
+                </Link>
+
                 <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
-                  Phong trào thi đua là sân chơi bổ ích, tạo cơ hội để học sinh thể hiện tài năng, nuôi dưỡng niềm đam mê nghệ thuật và tăng cường sự đoàn kết, gắn bó trong toàn trường.
+                  {mediaBigPost.excerpt}
                 </p>
               </div>
 
-              {/* 4 Bottom Gallery Thumbnails */}
-              <div className="grid grid-cols-4 gap-2 pt-1">
-                {[campusFacadeImg, '/education_slide_growth.jpg', '/education_slide_study.jpg', sloganBannerImg].map(
-                  (thumb, i) => (
-                    <div
-                      key={i}
-                      className="h-16 rounded-md overflow-hidden border border-slate-200"
-                    >
+              {/* Phần Dưới: Lưới 4 ảnh hoạt động (Matching Bo tri tin chuan_OK.png) */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-3 border-t border-slate-100">
+                {mediaFourCards.map((card, idx) => (
+                  <Link
+                    key={idx}
+                    to={card.link}
+                    className="group space-y-1.5 block text-center"
+                  >
+                    <div className="h-18 rounded-lg overflow-hidden border border-slate-200 bg-slate-100">
                       <img
-                        src={thumb}
-                        alt="Hình ảnh hoạt động"
-                        className="w-full h-full object-cover hover:scale-105 transition-transform"
+                        src={card.image}
+                        alt={card.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>
-                  )
-                )}
+                    <h4 className="text-[11px] font-semibold text-slate-700 group-hover:text-[#003B8E] line-clamp-2 leading-tight transition-colors">
+                      {card.title}
+                    </h4>
+                  </Link>
+                ))}
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 5. THƯ VIỆN MEDIA (6 Cols) & VĂN BẢN MỚI (6 Cols) WITH DISTINCT FRAMED CONTAINERS */}
+      {/* 6. KHỐI 3: THƯ VIỆN MEDIA & VĂN BẢN MỚI (GIỮ NGUYÊN NHƯ HIỆN TRẠNG) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Cột Trái: THƯ VIỆN MEDIA - Framed Container */}
+          {/* Cột Trái: THƯ VIỆN MEDIA (6 cols) */}
           <div className="lg:col-span-6 space-y-3 p-4 sm:p-5 rounded-2xl border-2 border-blue-900/15 bg-slate-50/40 shadow-xs">
-            {/* Header bar: Primary color background + Icon before H2 */}
+            {/* Header Bar */}
             <div className="bg-gradient-to-r from-[#002b66] to-[#003B8E] text-white px-4 py-2.5 rounded-xl shadow-xs flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Film className="h-5 w-5 text-amber-300" />
@@ -562,7 +671,7 @@ export function HomePage() {
                 </h2>
               </div>
               <Link
-                to="/albums"
+                to="/media"
                 className="text-xs text-amber-300 hover:text-white font-semibold inline-flex items-center gap-0.5 transition-colors"
               >
                 <span>Xem tất cả</span>
@@ -576,7 +685,7 @@ export function HomePage() {
                 <button
                   type="button"
                   onClick={() => setActiveMediaTab('image')}
-                  className={`px-4 py-1.5 rounded-md text-xs font-semibold transition-colors ${
+                  className={`px-4 py-1.5 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
                     activeMediaTab === 'image'
                       ? 'bg-[#003B8E] text-white shadow-xs'
                       : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -587,7 +696,7 @@ export function HomePage() {
                 <button
                   type="button"
                   onClick={() => setActiveMediaTab('video')}
-                  className={`px-4 py-1.5 rounded-md text-xs font-semibold transition-colors ${
+                  className={`px-4 py-1.5 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
                     activeMediaTab === 'video'
                       ? 'bg-[#003B8E] text-white shadow-xs'
                       : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -598,7 +707,7 @@ export function HomePage() {
                 <button
                   type="button"
                   onClick={() => setActiveMediaTab('doc')}
-                  className={`px-4 py-1.5 rounded-md text-xs font-semibold transition-colors ${
+                  className={`px-4 py-1.5 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
                     activeMediaTab === 'doc'
                       ? 'bg-[#003B8E] text-white shadow-xs'
                       : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -608,33 +717,81 @@ export function HomePage() {
                 </button>
               </div>
 
-              {/* 4 Album Cards Carousel Grid */}
+              {/* Media Cards Grid depending on activeMediaTab */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 relative">
-                {mediaAlbums.map((album, idx) => (
-                  <div
-                    key={idx}
-                    className="group cursor-pointer space-y-1.5 text-center"
-                  >
-                    <div className="h-24 rounded-lg overflow-hidden border border-slate-200 bg-slate-100">
-                      <img
-                        src={album.image}
-                        alt={album.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                    {/* H3/P font size */}
-                    <h3 className="text-xs sm:text-sm font-semibold text-slate-800 group-hover:text-[#003B8E] line-clamp-2 leading-tight transition-colors">
-                      {album.title}
-                    </h3>
-                  </div>
-                ))}
+                {activeMediaTab === 'image' &&
+                  mediaAlbums.map((album, idx) => (
+                    <Link
+                      key={idx}
+                      to="/media"
+                      className="group space-y-1.5 text-center block"
+                    >
+                      <div className="h-24 rounded-lg overflow-hidden border border-slate-200 bg-slate-100">
+                        <img
+                          src={album.image}
+                          alt={album.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                      <h3 className="text-xs sm:text-sm font-semibold text-slate-800 group-hover:text-[#003B8E] line-clamp-2 leading-tight transition-colors">
+                        {album.title}
+                      </h3>
+                    </Link>
+                  ))}
+
+                {activeMediaTab === 'video' &&
+                  INITIAL_SEED_VIDEOS.map((video) => (
+                    <Link
+                      key={video.id}
+                      to="/media"
+                      className="group space-y-1.5 text-center block"
+                    >
+                      <div className="h-24 rounded-lg overflow-hidden border border-slate-200 bg-slate-900 relative">
+                        <img
+                          src={video.thumbnail}
+                          alt={video.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-90"
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/25 group-hover:bg-black/10 transition-colors">
+                          <div className="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center shadow-md">
+                            <Film className="w-4 h-4" />
+                          </div>
+                        </div>
+                      </div>
+                      <h3 className="text-xs sm:text-sm font-semibold text-slate-800 group-hover:text-[#003B8E] line-clamp-2 leading-tight transition-colors">
+                        {video.title}
+                      </h3>
+                    </Link>
+                  ))}
+
+                {activeMediaTab === 'doc' &&
+                  INITIAL_SEED_DOCS.map((doc) => (
+                    <Link
+                      key={doc.id}
+                      to="/media"
+                      className="group p-2.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-white hover:border-blue-400 transition-all text-left flex flex-col justify-between h-28 block"
+                    >
+                      <div className="space-y-1">
+                        <span className="text-[10px] font-bold text-red-600 font-mono">
+                          {doc.fileFormat} • {doc.fileSize}
+                        </span>
+                        <h3 className="text-[11px] font-semibold text-slate-800 group-hover:text-[#003B8E] line-clamp-2 leading-tight transition-colors">
+                          {doc.title}
+                        </h3>
+                      </div>
+                      <span className="text-[10px] text-blue-700 font-bold flex items-center gap-1">
+                        <Download className="w-3 h-3" />
+                        Tải học liệu
+                      </span>
+                    </Link>
+                  ))}
               </div>
             </div>
           </div>
 
-          {/* Cột Phải: VĂN BẢN MỚI - Framed Container */}
+          {/* Cột Phải: VĂN BẢN MỚI (6 cols) */}
           <div className="lg:col-span-6 space-y-3 p-4 sm:p-5 rounded-2xl border-2 border-blue-900/15 bg-slate-50/40 shadow-xs">
-            {/* Header bar: Primary color background + Icon before H2 */}
+            {/* Header Bar */}
             <div className="bg-gradient-to-r from-[#002b66] to-[#003B8E] text-white px-4 py-2.5 rounded-xl shadow-xs flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <FileText className="h-5 w-5 text-amber-300" />
@@ -654,16 +811,16 @@ export function HomePage() {
             <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 {newDocuments.map((doc, idx) => (
-                  <div
+                  <Link
                     key={idx}
-                    className="p-3 rounded-lg border border-slate-200 hover:border-blue-400 bg-white hover:bg-blue-50/30 transition-all space-y-2 group shadow-2xs"
+                    to="/documents"
+                    className="p-3 rounded-lg border border-slate-200 hover:border-blue-400 bg-white hover:bg-blue-50/30 transition-all space-y-2 group shadow-2xs block"
                   >
                     <div className="flex items-start gap-2.5">
                       <div className="h-9 w-9 rounded-md bg-red-50 text-red-600 flex items-center justify-center shrink-0 border border-red-200">
                         <FileText className="h-4 w-4" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        {/* H3/H4 increased by ~15-20% */}
                         <h3 className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-[#003B8E] line-clamp-2 leading-snug transition-colors">
                           {doc.title}
                         </h3>
@@ -676,7 +833,7 @@ export function HomePage() {
                       </span>
                       <span className="text-slate-400">{doc.date}</span>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -684,7 +841,7 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* 6. MỤC THÔNG ĐIỆP GIÁO DỤC: BỐ TRÍ DẠNG SLIDE VỚI CHIỀU CAO THẤP GỌN 50-60% */}
+      {/* 7. SLIDER THÔNG ĐIỆP GIÁO DỤC & PHƯƠNG CHÂM (BÊN DƯỚI GẦN FOOTER, KHÓA CỠ KHUNG CHUẨN) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2">
         <EducationalMessageSlider />
       </section>

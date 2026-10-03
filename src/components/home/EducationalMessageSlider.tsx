@@ -44,37 +44,41 @@ export function EducationalMessageSlider() {
   const slide = slides[activeIndex];
 
   return (
-    <div className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-[#002b66] via-[#003B8E] to-[#0284c7] shadow-lg border-2 border-blue-400/30 text-white min-h-[140px] sm:min-h-[160px] md:min-h-[170px] flex items-center">
+    <div className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-[#002b66] via-[#003B8E] to-[#0284c7] shadow-md border-2 border-blue-400/30 text-white h-[200px] sm:h-[180px] md:h-[185px]">
       {/* Background Graphic Pattern Overlay */}
-      <div className="absolute inset-0 bg-radial from-transparent via-black/10 to-black/30 pointer-events-none" />
+      <div className="absolute inset-0 bg-radial from-transparent via-black/10 to-black/25 pointer-events-none" />
 
-      <div className="relative w-full h-full flex flex-col md:flex-row items-center justify-between">
-        {/* Left: Message content (Takes 60-65% width) */}
-        <div className="w-full md:w-3/5 p-4 sm:p-6 md:p-7 z-10 space-y-1.5 sm:space-y-2 text-center md:text-left">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-400/20 border border-amber-300/40 text-amber-300 text-[10px] sm:text-xs font-bold uppercase tracking-widest">
-            <Sparkles className="w-3 h-3 text-amber-300" />
-            <span>{slide.tag}</span>
+      {/* Locked uniform inner layout */}
+      <div className="relative w-full h-full flex flex-row items-stretch justify-between">
+        {/* Left: Message content (Takes 60% locked width) */}
+        <div className="w-3/5 h-full p-4 sm:p-5 md:p-6 z-10 flex flex-col justify-center space-y-1 sm:space-y-1.5 overflow-hidden">
+          <div>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-400/20 border border-amber-300/40 text-amber-300 text-[10px] sm:text-xs font-bold uppercase tracking-widest">
+              <Sparkles className="w-3 h-3 text-amber-300" />
+              <span>{slide.tag}</span>
+            </span>
           </div>
 
-          <h3 className="text-base sm:text-xl md:text-2xl font-black text-white tracking-wide leading-tight uppercase drop-shadow-sm">
+          <h3 className="text-sm sm:text-lg md:text-xl font-black text-white tracking-wide leading-tight uppercase drop-shadow-sm line-clamp-2">
             {slide.title}{' '}
-            <span className="text-amber-300 block sm:inline">{slide.highlight}</span>
+            <span className="text-amber-300 inline">{slide.highlight}</span>
           </h3>
 
-          <p className="text-xs sm:text-sm text-blue-100 font-medium line-clamp-2 max-w-xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-blue-100 font-medium line-clamp-2 leading-relaxed">
             {slide.subtitle}
           </p>
         </div>
 
-        {/* Right: Scaled Image (Takes 35-40% width with smooth blended edge) */}
-        <div className="w-full md:w-2/5 h-36 sm:h-40 md:h-full min-h-[140px] relative overflow-hidden shrink-0">
+        {/* Right: Scaled Image (Takes 40% locked width and 100% locked height, strictly object-cover) */}
+        <div className="w-2/5 h-full relative overflow-hidden shrink-0">
           <img
+            key={slide.id}
             src={slide.image || '/campus_facade.jpg'}
             alt={slide.title}
-            className="w-full h-full object-cover object-center transition-all duration-700"
+            className="w-full h-full object-cover object-center"
           />
           {/* Subtle gradient overlay to blend into blue background */}
-          <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#002b66] via-[#003B8E]/30 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#002b66] via-[#003B8E]/30 to-transparent" />
         </div>
       </div>
 

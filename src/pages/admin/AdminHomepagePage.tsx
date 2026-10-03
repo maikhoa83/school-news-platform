@@ -15,6 +15,7 @@ import { useHomepageLayout } from '../../homepage/hooks/useHomepageLayout';
 import { HomepageEditor } from '../../homepage/components/editor/HomepageEditor';
 import { PreviewFrame } from '../../homepage/components/editor/PreviewFrame';
 import { EducationalSlidesEditor } from '../../components/admin/EducationalSlidesEditor';
+import { MarqueeTickerEditor } from '../../components/admin/MarqueeTickerEditor';
 import { usePermissions } from '../../hooks/usePermissions';
 import { useAuth } from '../../hooks/useAuth';
 import { Button } from '../../components/ui/Button';
@@ -25,7 +26,7 @@ import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 export function AdminHomepagePage() {
   const { hasPermission } = usePermissions();
   const { profile } = useAuth();
-  const [activeTab, setActiveTab] = useState<'editor' | 'preview' | 'slides'>('editor');
+  const [activeTab, setActiveTab] = useState<'editor' | 'preview' | 'slides' | 'marquee'>('editor');
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const canEdit = hasPermission('homepage.edit');
@@ -224,7 +225,19 @@ export function AdminHomepagePage() {
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Thông điệp &amp; Phương châm (Slider)
+            Thông điệp &amp; Phương châm
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('marquee')}
+            aria-label="Quản lý dòng chữ chạy chủ đề năm học"
+            className={`px-3 py-1.5 rounded-md font-semibold text-xs transition-colors cursor-pointer ${
+              activeTab === 'marquee'
+                ? 'bg-white text-amber-900 shadow-xs font-bold'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Chủ đề Năm học (Chữ chạy)
           </button>
           <button
             type="button"
@@ -258,6 +271,10 @@ export function AdminHomepagePage() {
 
       {activeTab === 'slides' && (
         <EducationalSlidesEditor />
+      )}
+
+      {activeTab === 'marquee' && (
+        <MarqueeTickerEditor />
       )}
 
       {activeTab === 'preview' && (

@@ -5,14 +5,22 @@ import {
   FileText,
   Bell,
   Image,
-  BookOpen,
-  Calendar,
+  Radio,
   PhoneCall,
 } from 'lucide-react';
 import { NavigationItem } from './types';
 
 /**
- * Public Navigation Configuration matching Trang chu_Chot.png
+ * Public Navigation Configuration
+ * Exact sequence:
+ * 1. TRANG CHỦ
+ * 2. GIỚI THIỆU (Tổng quan nhà trường, Cơ cấu tổ chức & Đội ngũ, Tầm nhìn & Sứ mệnh)
+ * 3. TIN TỨC (Hoạt động nhà trường, Điểm tin giáo dục)
+ * 4. TRUYỀN THÔNG (Điểm tin giáo dục, Gương sáng giáo dục, Phổ biến pháp luật)
+ * 5. VĂN BẢN
+ * 6. THÔNG BÁO
+ * 7. THƯ VIỆN
+ * 8. LIÊN HỆ
  */
 export const publicNavigationItems: NavigationItem[] = [
   {
@@ -55,22 +63,43 @@ export const publicNavigationItems: NavigationItem[] = [
     moduleKey: 'news',
     children: [
       {
-        key: 'news-school',
+        key: 'news-school-activities',
         label: 'Hoạt động nhà trường',
-        href: '/news?cat=hoat-dong',
-        description: 'Các hoạt động giáo dục, thi đua',
+        href: '/news?cat=hoat-dong-nha-truong',
+        description: 'Tin tức sinh hoạt chuyên môn, hội thi và đoàn thể',
       },
       {
-        key: 'news-events',
-        label: 'Sự kiện học đường',
-        href: '/news?cat=su-kien',
-        description: 'Các ngày lễ kỷ niệm, hội thi',
+        key: 'news-education-bulletin',
+        label: 'Điểm tin giáo dục',
+        href: '/news?cat=diem-tin-giao-duc',
+        description: 'Các sự kiện giáo dục trọng đại và phong trào thi đua',
+      },
+    ],
+  },
+  {
+    key: 'media-comms',
+    label: 'TRUYỀN THÔNG',
+    href: '/news?cat=truyen-thong',
+    icon: Radio,
+    moduleKey: 'news',
+    children: [
+      {
+        key: 'comms-news-bulletin',
+        label: 'Điểm tin giáo dục',
+        href: '/news?cat=diem-tin-giao-duc',
+        description: 'Bản tin tổng hợp các hoạt động nổi bật của nhà trường',
       },
       {
-        key: 'news-education',
-        label: 'Tin ngành Giáo dục',
-        href: '/news?cat=giao-duc',
-        description: 'Chủ trương và chính sách mới',
+        key: 'comms-bright-examples',
+        label: 'Gương sáng giáo dục',
+        href: '/news?cat=guong-sang-gd',
+        description: 'Tuyên dương thầy cô dạy giỏi và học sinh tiêu biểu',
+      },
+      {
+        key: 'comms-legal-education',
+        label: 'Phổ biến pháp luật',
+        href: '/news?cat=pho-bien-phap-luat',
+        description: 'An toàn giao thông, văn hóa mạng và kỹ năng sống',
       },
     ],
   },
@@ -94,32 +123,6 @@ export const publicNavigationItems: NavigationItem[] = [
     href: '/media',
     icon: Image,
     moduleKey: 'albums',
-  },
-  {
-    key: 'media-comms',
-    label: 'TRUYỀN THÔNG',
-    href: '/news?cat=truyen-thong',
-    icon: Newspaper,
-    children: [
-      {
-        key: 'media-school-activities',
-        label: 'Hoạt động nhà trường',
-        href: '/news?cat=hoat-dong',
-        description: 'Tin tức hoạt động giáo dục và phong trào thi đua',
-      },
-      {
-        key: 'media-school-events',
-        label: 'Sự kiện học đường',
-        href: '/news?cat=su-kien',
-        description: 'Lễ hội, kỷ niệm và các chuyên đề ngoại khóa',
-      },
-      {
-        key: 'media-edu-bulletin',
-        label: 'Bản tin giáo dục',
-        href: '/news?cat=giao-duc',
-        description: 'Thông tin tuyên truyền, phổ biến giáo dục và kỹ năng',
-      },
-    ],
   },
   {
     key: 'contact',

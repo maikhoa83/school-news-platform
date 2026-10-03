@@ -68,7 +68,7 @@ export function PublicMobileNav({
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Thực đơn điều hướng di động"
+      aria-label="Danh mục điều hướng di động"
       className="fixed inset-0 z-50 flex md:hidden"
     >
       {/* Backdrop */}

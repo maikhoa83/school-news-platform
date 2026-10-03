@@ -39,6 +39,7 @@ export const AdminNewsEditorPage: React.FC = () => {
   const [content, setContent] = useState('');
   const [thumbnail, setThumbnail] = useState<string | null>(null);
   const [isFeatured, setIsFeatured] = useState(false);
+  const [isHighlight, setIsHighlight] = useState(false);
   const [authorName, setAuthorName] = useState('');
   const [source, setSource] = useState('');
   const [sourceUrl, setSourceUrl] = useState('');
@@ -64,6 +65,7 @@ export const AdminNewsEditorPage: React.FC = () => {
             setContent(item.content);
             setThumbnail(item.thumbnail || null);
             setIsFeatured(item.is_featured);
+            setIsHighlight(Boolean((item as any).is_highlight));
             setStatus(item.status);
             setAuthorName(item.author_name || '');
             setSource(item.source || '');
@@ -133,6 +135,7 @@ export const AdminNewsEditorPage: React.FC = () => {
           source: source.trim() || undefined,
           source_url: sourceUrl.trim() || undefined,
           is_featured: isFeatured,
+          is_highlight: isHighlight,
           status: targetStatus === 'published' ? undefined : targetStatus,
           tag_ids: selectedTagIds,
         });
@@ -168,6 +171,7 @@ export const AdminNewsEditorPage: React.FC = () => {
             source: source.trim() || undefined,
             source_url: sourceUrl.trim() || undefined,
             is_featured: isFeatured,
+            is_highlight: isHighlight,
             status: targetStatus === 'published' ? 'draft' : targetStatus,
             tag_ids: selectedTagIds,
           },
@@ -431,20 +435,44 @@ export const AdminNewsEditorPage: React.FC = () => {
             />
           </div>
 
-          {/* Extra Options */}
+          {/* Display & Position Placement Options */}
           <div className="bg-white p-5 rounded-2xl border border-neutral-200 shadow-2xs space-y-3">
             <label className="block text-xs font-bold text-neutral-700">
-              Cài đặt hiển thị
+              Vị trí hiển thị trang chủ
             </label>
 
-            <label className="flex items-center gap-2.5 cursor-pointer text-xs font-medium text-neutral-700">
+            <label className="flex items-start gap-2.5 cursor-pointer text-xs font-medium text-neutral-700 p-2.5 rounded-xl hover:bg-blue-50/60 border border-slate-200/80 transition-colors">
               <input
                 type="checkbox"
                 checked={isFeatured}
                 onChange={(e) => setIsFeatured(e.target.checked)}
-                className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
+                className="w-4 h-4 mt-0.5 text-blue-600 rounded border-neutral-300 focus:ring-blue-500 cursor-pointer"
               />
-              <span>Đánh dấu là bài viết Nổi bật (Featured)</span>
+              <div>
+                <span className="font-bold text-blue-900 flex items-center gap-1">
+                  ⭐ Tin Tiêu điểm
+                </span>
+                <p className="text-[11px] text-neutral-500 font-normal mt-0.5 leading-relaxed">
+                  Hiển thị trong tab "Tin Tiêu điểm" ở khối Tin tức mới nhất ngoài trang chủ.
+                </p>
+              </div>
+            </label>
+
+            <label className="flex items-start gap-2.5 cursor-pointer text-xs font-medium text-neutral-700 p-2.5 rounded-xl hover:bg-amber-50/60 border border-slate-200/80 transition-colors">
+              <input
+                type="checkbox"
+                checked={isHighlight}
+                onChange={(e) => setIsHighlight(e.target.checked)}
+                className="w-4 h-4 mt-0.5 text-amber-600 rounded border-neutral-300 focus:ring-amber-500 cursor-pointer"
+              />
+              <div>
+                <span className="font-bold text-amber-800 flex items-center gap-1">
+                  🔥 Tin Nổi bật
+                </span>
+                <p className="text-[11px] text-neutral-500 font-normal mt-0.5 leading-relaxed">
+                  Hiển thị trong tab "Tin Nổi bật" và ghim làm bài lớn đại diện khối tin.
+                </p>
+              </div>
             </label>
           </div>
         </div>
