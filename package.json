@@ -8,6 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
+    "package": "bash installer/build-package.sh",
     "lint": "tsc --noEmit",
     "test:step07": "tsx scripts/run_step07_live_validation.ts",
     "verify:step08:g1": "tsx scripts/run_step08_g1_verification.ts",

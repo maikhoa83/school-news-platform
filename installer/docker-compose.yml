@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  school-web:
+    build:
+      context: ..
+      dockerfile: installer/Dockerfile
+    container_name: school_news_platform
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    environment:
+      - NODE_ENV=production

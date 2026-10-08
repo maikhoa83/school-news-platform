@@ -65,6 +65,7 @@ export function AppRoutes() {
           </SetupGuard>
         }
       />
+      <Route path="/install" element={<Navigate to="/setup" replace />} />
 
       {/* Public Shell Routes */}
       <Route element={<PublicShell />}>

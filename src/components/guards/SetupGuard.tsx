@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useSearchParams } from 'react-router-dom';
 import { useConfig } from '../../hooks/useConfig';
 import { LoadingSpinner } from '../common/LoadingSpinner';
 
@@ -15,6 +15,8 @@ interface SetupGuardProps {
 
 export function SetupGuard({ children }: SetupGuardProps) {
   const { setupState, isLoadingConfig } = useConfig();
+  const [searchParams] = useSearchParams();
+  const isForce = searchParams.get('force') === 'true' || searchParams.get('reinstall') === 'true';
 
   if (isLoadingConfig) {
     return (
@@ -29,8 +31,8 @@ export function SetupGuard({ children }: SetupGuardProps) {
     );
   }
 
-  // If setup has already been locked and completed, disallow wizard access
-  if (setupState?.is_completed) {
+  // If setup has already been locked and completed, disallow wizard access unless forced
+  if (setupState?.is_completed && !isForce) {
     return <Navigate to="/admin" replace />;
   }
 

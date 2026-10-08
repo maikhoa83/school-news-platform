@@ -4,6 +4,7 @@
  */
 
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   GraduationCap,
   Palette,
@@ -17,6 +18,8 @@ import {
   RotateCcw,
   Upload,
   Image as ImageIcon,
+  Sparkles,
+  Download,
 } from 'lucide-react';
 import { useConfig } from '../../hooks/useConfig';
 import { usePermissions } from '../../hooks/usePermissions';
@@ -123,10 +126,42 @@ export function AdminSettingsPage() {
           </p>
         </div>
 
-        <Button variant="outline" size="sm" onClick={() => refreshConfig()}>
-          <RotateCcw className="h-4 w-4 mr-1.5" />
-          Làm mới cấu hình
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <a
+            href="/school-news-platform-dist.zip"
+            download="school-news-platform-dist.zip"
+            title="Tải gói file ZIP trực tiếp"
+            className="inline-flex items-center px-3 py-1.5 rounded-lg border border-emerald-300 text-emerald-800 bg-emerald-50 hover:bg-emerald-100 text-xs font-semibold shadow-2xs transition-colors"
+          >
+            <Download className="h-3.5 w-3.5 mr-1.5 text-emerald-600" />
+            Tải ZIP Bản Cài Đặt (9.2 MB)
+          </a>
+          <a
+            href="https://github.com/maikhoa83/school-news-platform/raw/main/public/school-news-platform-dist.zip"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Tải tệp ZIP dự phòng từ kho lưu trữ GitHub"
+            className="inline-flex items-center px-3 py-1.5 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 text-xs font-semibold shadow-2xs transition-colors"
+          >
+            <Download className="h-3.5 w-3.5 mr-1.5 text-slate-500" />
+            Dự phòng từ GitHub (Raw)
+          </a>
+          <Link to="/setup?force=true">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="text-blue-700 border-blue-300 hover:bg-blue-50 font-semibold"
+            >
+              <Sparkles className="h-4 w-4 mr-1.5 text-amber-500" />
+              Chạy Trình Cài Đặt (Setup Wizard)
+            </Button>
+          </Link>
+          <Button variant="outline" size="sm" onClick={() => refreshConfig()}>
+            <RotateCcw className="h-4 w-4 mr-1.5" />
+            Làm mới cấu hình
+          </Button>
+        </div>
       </div>
 
       {saveNotice && (

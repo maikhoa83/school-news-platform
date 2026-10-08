@@ -16,9 +16,11 @@ const DEFAULT_SETUP_STATE: SetupState = {
   updated_at: new Date().toISOString(),
 };
 
+const LOCAL_STORAGE_KEY = 'school_setup_state_v1';
+
 export const setupService = {
   /**
-   * Fetch current setup state from public.setup_state
+   * Fetch current setup state from Supabase or localStorage fallback
    */
   async getSetupState(): Promise<SetupState> {
     try {
@@ -28,27 +30,37 @@ export const setupService = {
         .eq('id', 'current')
         .maybeSingle();
 
-      if (error) {
-        console.warn('[setupService] Error reading setup_state:', error.message);
-        return DEFAULT_SETUP_STATE;
+      if (!error && data) {
+        const state: SetupState = {
+          id: data.id || 'current',
+          is_completed: Boolean(data.is_completed),
+          current_step: data.current_step || 'welcome',
+          completed_at: data.completed_at || null,
+          step_data: (data.step_data as Record<string, unknown>) || {},
+          updated_at: data.updated_at || new Date().toISOString(),
+        };
+        try {
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+        } catch {
+          // Ignore localStorage errors
+        }
+        return state;
       }
-
-      if (!data) {
-        return DEFAULT_SETUP_STATE;
-      }
-
-      return {
-        id: data.id || 'current',
-        is_completed: Boolean(data.is_completed),
-        current_step: data.current_step || 'welcome',
-        completed_at: data.completed_at || null,
-        step_data: (data.step_data as Record<string, unknown>) || {},
-        updated_at: data.updated_at || new Date().toISOString(),
-      };
-    } catch (err) {
-      console.warn('[setupService] Exception reading setup_state:', err);
-      return DEFAULT_SETUP_STATE;
+    } catch {
+      // Supabase not reachable or offline, fallback below
     }
+
+    // Local fallback
+    try {
+      const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (cached) {
+        return JSON.parse(cached);
+      }
+    } catch {
+      // Ignore
+    }
+
+    return DEFAULT_SETUP_STATE;
   },
 
   /**
@@ -72,20 +84,35 @@ export const setupService = {
         ...(stepData || {}),
       };
 
-      const { error } = await supabase
-        .from('setup_state')
-        .upsert(
-          {
-            id: 'current',
-            current_step: stepKey,
-            step_data: mergedStepData,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: 'id' }
-        );
+      const newState: SetupState = {
+        id: 'current',
+        is_completed: false,
+        current_step: stepKey as any,
+        completed_at: null,
+        step_data: mergedStepData,
+        updated_at: new Date().toISOString(),
+      };
 
-      if (error) {
-        return { success: false, error: error.message };
+      try {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newState));
+      } catch {
+        // Ignore
+      }
+
+      try {
+        await supabase
+          .from('setup_state')
+          .upsert(
+            {
+              id: 'current',
+              current_step: stepKey,
+              step_data: mergedStepData,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: 'id' }
+          );
+      } catch {
+        // Standalone mode is ok
       }
 
       return { success: true };
@@ -103,21 +130,36 @@ export const setupService = {
   async lockInstallation(): Promise<{ success: boolean; error?: string }> {
     try {
       const now = new Date().toISOString();
-      const { error } = await supabase
-        .from('setup_state')
-        .upsert(
-          {
-            id: 'current',
-            is_completed: true,
-            completed_at: now,
-            current_step: 'lock',
-            updated_at: now,
-          },
-          { onConflict: 'id' }
-        );
+      const current = await this.getSetupState();
+      const lockedState: SetupState = {
+        ...current,
+        is_completed: true,
+        completed_at: now,
+        current_step: 'lock',
+        updated_at: now,
+      };
 
-      if (error) {
-        return { success: false, error: error.message };
+      try {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(lockedState));
+      } catch {
+        // Ignore
+      }
+
+      try {
+        await supabase
+          .from('setup_state')
+          .upsert(
+            {
+              id: 'current',
+              is_completed: true,
+              completed_at: now,
+              current_step: 'lock',
+              updated_at: now,
+            },
+            { onConflict: 'id' }
+          );
+      } catch {
+        // Standalone mode is ok
       }
 
       return { success: true };
@@ -125,6 +167,53 @@ export const setupService = {
       return {
         success: false,
         error: err instanceof Error ? err.message : 'Unknown error locking installation',
+      };
+    }
+  },
+
+  /**
+   * Reset setup wizard (used by Super Admin to re-run setup when needed)
+   */
+  async resetSetup(): Promise<{ success: boolean; error?: string }> {
+    try {
+      const resetState: SetupState = {
+        id: 'current',
+        is_completed: false,
+        current_step: 'welcome',
+        completed_at: null,
+        step_data: {},
+        updated_at: new Date().toISOString(),
+      };
+
+      try {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(resetState));
+      } catch {
+        // Ignore
+      }
+
+      try {
+        await supabase
+          .from('setup_state')
+          .upsert(
+            {
+              id: 'current',
+              is_completed: false,
+              completed_at: null,
+              current_step: 'welcome',
+              step_data: {},
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: 'id' }
+          );
+      } catch {
+        // Standalone mode is ok
+      }
+
+      return { success: true };
+    } catch (err) {
+      return {
+        success: false,
+        error: err instanceof Error ? err.message : 'Unknown error resetting setup',
       };
     }
   },

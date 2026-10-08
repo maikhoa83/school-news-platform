@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trình Hướng Dẫn Cài Đặt Khởi Tạo (Setup Wizard) - School News Platform</title>
+  <link rel="icon" href="/logo.jpg" type="image/jpeg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between p-4 sm:p-8">
+
+  <!-- Header -->
+  <header class="max-w-4xl w-full mx-auto flex flex-wrap items-center justify-between gap-4 py-4 border-b border-slate-800">
+    <div class="flex items-center gap-3">
+      <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-700 to-indigo-900 text-amber-300 flex items-center justify-center font-bold text-lg border border-blue-600 shadow-md">
+        🎓
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="font-extrabold text-white text-base">SETUP WIZARD</span>
+          <span class="text-[10px] py-0.5 px-2 rounded-full bg-blue-900/80 text-blue-200 border border-blue-700 font-bold">STANDALONE PACKAGE</span>
+        </div>
+        <p class="text-xs text-slate-400">Cổng Thông Tin Điện Tử Trường Học • Thiết kế bởi MVK</p>
+      </div>
+    </div>
+    <div class="text-xs text-slate-400">
+      Phiên bản: <strong class="text-amber-400">v1.2.0 Production</strong>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-4xl w-full mx-auto my-8 space-y-6">
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
+      
+      <!-- Banner Chào Mừng -->
+      <div class="p-4 rounded-xl bg-gradient-to-r from-blue-900/50 to-indigo-900/50 border border-blue-700/60 text-blue-100 space-y-2">
+        <h1 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+          <span>✨</span>
+          <span>Chào Mừng Quản Trị Viên Nhà Trường</span>
+        </h1>
+        <p class="text-xs leading-relaxed text-blue-200">
+          Trình hướng dẫn này giúp bạn kiểm tra môi trường máy chủ, tải cấu hình, kết nối cơ sở dữ liệu và kích hoạt Cổng thông tin điện tử trường học độc lập.
+        </p>
+      </div>
+
+      <!-- Quick Action: Khởi chạy trực tiếp -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <a href="/setup" class="p-4 rounded-xl border border-blue-600 bg-blue-900/20 hover:bg-blue-900/40 transition-all block group">
+          <div class="text-sm font-bold text-blue-300 group-hover:text-blue-200 mb-1 flex items-center gap-1.5">
+            <span>🚀</span>
+            <span>Khởi Chạy Setup Wizard Tương Tác</span>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Mở trình hướng dẫn 10 bước trực tiếp trong ứng dụng tại đường dẫn <code>/setup</code>.
+          </p>
+        </a>
+
+        <a href="/" class="p-4 rounded-xl border border-emerald-600 bg-emerald-900/20 hover:bg-emerald-900/40 transition-all block group">
+          <div class="text-sm font-bold text-emerald-300 group-hover:text-emerald-200 mb-1 flex items-center gap-1.5">
+            <span>🌐</span>
+            <span>Vào Thẳng Trang Chủ Website</span>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Xem giao diện trang chủ đã nạp sẵn nhận diện Trường THCS &amp; THPT Vĩnh Phong.
+          </p>
+        </a>
+      </div>
+
+      <!-- Form cấu hình thông tin trường -->
+      <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-4">
+        <h2 class="text-sm font-bold text-white flex items-center gap-2">
+          <span>⚙️</span>
+          <span>Công Cụ Sinh Cấu Hình Tự Động (.env &amp; school-config.json)</span>
+        </h2>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div>
+            <label class="block text-slate-400 mb-1">Tên đầy đủ nhà trường:</label>
+            <input type="text" id="schoolName" value="Trường THCS & THPT Vĩnh Phong" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">Tên viết tắt:</label>
+            <input type="text" id="shortName" value="THCS & THPT Vĩnh Phong" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-blue-500">
+          </div>
+        </div>
+
+        <div class="text-xs">
+          <label class="block text-slate-400 mb-1">Chủ đề năm học 2026 – 2027 (Chữ chạy Header):</label>
+          <input type="text" id="academicTheme" value="Năm học 2026 - 2027: &quot;Đổi mới tư duy - Chuyển biến mạnh mẽ - Kết quả thực chất&quot;" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-amber-300 font-semibold focus:outline-none focus:border-blue-500">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div>
+            <label class="block text-slate-400 mb-1">Email Quản trị tối cao (Super Admin):</label>
+            <input type="text" id="adminEmail" value="admin@vinhphong.edu.vn" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">Mật khẩu quản trị ban đầu:</label>
+            <input type="text" id="adminPass" value="Admin@2026!" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white font-mono focus:outline-none focus:border-blue-500">
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-3 pt-2">
+          <button type="button" onclick="downloadConfigJSON()" class="px-4 py-2 rounded-lg bg-blue-700 hover:bg-blue-600 text-white text-xs font-semibold flex items-center gap-1.5 cursor-pointer">
+            <span>📥</span>
+            <span>Tải file school-config.json</span>
+          </button>
+          <button type="button" onclick="downloadEnvFile()" class="px-4 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-semibold flex items-center gap-1.5 cursor-pointer">
+            <span>📄</span>
+            <span>Tải file .env cho Hosting</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Hướng dẫn nhanh -->
+      <div class="space-y-3 text-xs text-slate-300">
+        <h3 class="font-bold text-white text-sm">📖 Hướng Dẫn Tải Lên Host &amp; GitHub Nhanh:</h3>
+        <ol class="list-decimal list-inside space-y-1.5 text-slate-400">
+          <li><strong>Shared Hosting / cPanel:</strong> Nén thư mục <code class="text-amber-300">dist/</code> thành file ZIP, tải lên thư mục <code class="text-amber-300">public_html</code> trên cPanel và giải nén (tệp <code class="text-amber-300">.htaccess</code> đã được đóng gói sẵn để xử lý định tuyến SPA).</li>
+          <li><strong>GitHub Repo Mới:</strong> Tạo kho lưu trữ mới trên GitHub, chạy <code class="text-amber-300">git remote set-url origin &lt;URL&gt;</code> và <code class="text-amber-300">git push -u origin main</code>.</li>
+          <li><strong>Vercel / Netlify / Cloudflare Pages (Miễn phí 100%):</strong> Kết nối trực tiếp với GitHub repo của bạn, chọn Framework là <code class="text-amber-300">Vite</code> và nhấn <strong>Deploy</strong>.</li>
+        </ol>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="max-w-4xl w-full mx-auto text-center py-4 border-t border-slate-800 text-[11px] text-slate-500">
+    School News Platform Architecture v1.2 • Thiết kế web bởi MVK
+  </footer>
+
+  <script>
+    function downloadConfigJSON() {
+      const data = {
+        school_name: document.getElementById('schoolName').value,
+        short_name: document.getElementById('shortName').value,
+        academic_theme: document.getElementById('academicTheme').value,
+        admin_email: document.getElementById('adminEmail').value,
+        admin_password: document.getElementById('adminPass').value,
+        designed_by: 'MVK',
+        created_at: new Date().toISOString()
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'school-config.json';
+      a.click();
+    }
+
+    function downloadEnvFile() {
+      const school = document.getElementById('schoolName').value;
+      const short = document.getElementById('shortName').value;
+      const theme = document.getElementById('academicTheme').value;
+      const content = `VITE_APP_ENV=production\nVITE_SCHOOL_NAME=${school}\nVITE_SCHOOL_SHORT_NAME=${short}\nVITE_ACADEMIC_THEME=${theme}\nVITE_SUPABASE_URL=\nVITE_SUPABASE_ANON_KEY=\n`;
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = '.env.production';
+      a.click();
+    }
+  </script>
+</body>
+</html>

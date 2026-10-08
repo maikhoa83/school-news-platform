@@ -30,6 +30,7 @@ supabase/.temp/
 
 # Archives & Export bundles (Prevent committing test/audit zips)
 *.zip
+!public/school-news-platform-dist.zip
 *.tar.gz
 *.tgz
 *.rar

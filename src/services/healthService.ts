@@ -86,7 +86,7 @@ export const healthService = {
       details: {
         environment: envConfig.appEnv,
         runtime: 'Vite + React 18',
-        nodeEnv: process.env.NODE_ENV || 'development',
+        nodeEnv: (typeof process !== 'undefined' && process.env?.NODE_ENV) || import.meta.env?.MODE || 'production',
       },
       checkedAt,
     });
