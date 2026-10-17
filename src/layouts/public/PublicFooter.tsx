@@ -98,6 +98,11 @@ export function PublicFooter({
                     Liên hệ
                   </Link>
                 </div>
+                <div>
+                  <Link to="/login" className="hover:text-amber-300 text-amber-300/90 font-semibold transition-colors">
+                    Đăng nhập quản trị
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
@@ -151,14 +156,18 @@ export function PublicFooter({
         </div>
       </div>
 
-      {/* Bottom Bar: Copyright & MVK credit */}
+      {/* Bottom Bar: Copyright & MVK credit & Admin link */}
       <div className="border-t border-blue-900 bg-[#001f4d] py-3.5 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-blue-200/80">
           <div>
             © {currentYear} TRƯỜNG THCS & THPT VĨNH PHONG. All rights reserved.
           </div>
-          <div>
-            Thiết kế web bởi <span className="font-semibold text-white">MVK</span>
+          <div className="flex items-center gap-3">
+            <span>Thiết kế web bởi <span className="font-semibold text-white">MVK</span></span>
+            <span className="text-blue-400/40">|</span>
+            <Link to="/login" className="hover:text-amber-300 text-blue-300 hover:underline transition-colors text-[11px] font-medium">
+              Quản trị CMS
+            </Link>
           </div>
         </div>
       </div>

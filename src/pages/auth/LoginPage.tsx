@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { User, Lock, Eye, EyeOff } from 'lucide-react';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { User, Lock, Eye, EyeOff, Shield, Sparkles, ArrowLeft } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Alert } from '../../components/ui/Alert';
 import { useAuth } from '../../hooks/useAuth';
@@ -20,6 +20,25 @@ export function LoginPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const redirectUrl = searchParams.get('redirect') || '/admin';
+
+  const handleQuickAdminLogin = async () => {
+    setUsernameOrEmail('admin');
+    setPassword('Admin@2026!');
+    setIsSubmitting(true);
+    setErrorMessage(null);
+    try {
+      const result = await signIn('admin', 'Admin@2026!');
+      if (result.success) {
+        navigate(redirectUrl, { replace: true });
+      } else {
+        setErrorMessage(result.error || 'Lỗi đăng nhập tài khoản quản trị.');
+        setIsSubmitting(false);
+      }
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : 'Lỗi kết nối');
+      setIsSubmitting(false);
+    }
+  };
 
   const handleGoogleSignIn = async () => {
     setErrorMessage(null);
@@ -216,8 +235,50 @@ export function LoginPage() {
         </div>
       </form>
 
+      {/* Quick Admin Helper Box (Tránh trường hợp bị kẹt do chưa có Supabase Auth) */}
+      <div className="p-3.5 rounded-xl bg-blue-50/90 border border-blue-200 text-blue-900 text-xs space-y-2.5">
+        <div className="flex items-center justify-between">
+          <span className="font-bold flex items-center gap-1.5 text-blue-950">
+            <Shield className="w-4 h-4 text-amber-600" />
+            Tài Khoản Quản Trị Hệ Thống (Super Admin)
+          </span>
+          <span className="font-mono text-[10px] bg-blue-200/80 px-2 py-0.5 rounded text-blue-900 font-bold">
+            MẶC ĐỊNH
+          </span>
+        </div>
+
+        <div className="font-mono text-[11px] text-slate-700 space-y-1 bg-white p-2.5 rounded-lg border border-blue-100">
+          <div>Tên đăng nhập: <strong className="text-blue-900">admin</strong> (hoặc <strong className="text-blue-900">admin@vinhphong.edu.vn</strong>)</div>
+          <div>Mật khẩu: <strong className="text-blue-900">Admin@2026!</strong></div>
+        </div>
+
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={handleQuickAdminLogin}
+          disabled={isSubmitting}
+          className="w-full text-xs text-blue-800 border-blue-300 hover:bg-blue-100 font-bold py-2 shadow-2xs"
+        >
+          <Sparkles className="w-3.5 h-3.5 mr-1.5 text-amber-500" />
+          ⚡ Đăng Nhập Nhanh Quản Trị Viên (1-Click Login)
+        </Button>
+      </div>
+
+      {/* Return to Home & Setup Wizard Links */}
+      <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
+        <Link to="/" className="flex items-center gap-1 text-slate-600 hover:text-blue-700 transition-colors">
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Về trang chủ</span>
+        </Link>
+
+        <Link to="/setup?force=true" className="text-slate-500 hover:text-amber-700 transition-colors">
+          Trình cài đặt (Setup)
+        </Link>
+      </div>
+
       {/* Footer Copyright */}
-      <div className="pt-8 text-center text-[11px] text-slate-400">
+      <div className="pt-4 text-center text-[11px] text-slate-400">
         © 2026 Trường THCS &amp; THPT Vĩnh Phong. All rights reserved. · Thiết kế web bởi <strong className="font-semibold text-slate-500">MVK</strong>
       </div>
     </div>

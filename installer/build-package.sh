@@ -23,7 +23,23 @@ cp installer/index.html dist/installer/index.html
 echo "🗜️ Đang nén tệp school-news-platform-dist.zip..."
 rm -f school-news-platform-dist.zip public/school-news-platform-dist.zip dist/school-news-platform-dist.zip
 
-(cd dist && zip -r -9 ../school-news-platform-dist.zip . -x "*.DS_Store" -x "school-news-platform-dist.zip")
+if command -v zip >/dev/null 2>&1; then
+  (cd dist && zip -r -9 ../school-news-platform-dist.zip . -x "*.DS_Store" -x "school-news-platform-dist.zip")
+else
+  python3 -c "
+import os, zipfile
+with zipfile.ZipFile('school-news-platform-dist.zip', 'w', zipfile.ZIP_DEFLATED) as zipf:
+    for root, dirs, files in os.walk('dist'):
+        for d in dirs:
+            dir_path = os.path.relpath(os.path.join(root, d), 'dist') + '/'
+            zipf.writestr(zipfile.ZipInfo(dir_path), '')
+        for f in files:
+            if f == 'school-news-platform-dist.zip': continue
+            file_path = os.path.join(root, f)
+            archive_name = os.path.relpath(file_path, 'dist')
+            zipf.write(file_path, archive_name)
+"
+fi
 
 cp school-news-platform-dist.zip public/school-news-platform-dist.zip
 
